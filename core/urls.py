@@ -22,11 +22,19 @@ def rodar_migracoes(request):
         return HttpResponse("Migrações aplicadas com sucesso!")
     except Exception as e:
         return HttpResponse(f"Erro ao rodar migrações: {str(e)}", status=500)
+    
+def rodar_collectstatic(request):
+    try:
+        call_command("collectstatic", "--noinput")
+        return HttpResponse("Arquivos estáticos coletados com sucesso!")
+    except Exception as e:
+        return HttpResponse(f"Erro ao rodar collectstatic: {str(e)}", status=500)
 
 urlpatterns = [
     # Autenticação
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
+    path("rodar-collectstatic/", rodar_collectstatic, name="rodar_collectstatic"),
     
     # Painel do Vereador
     path("vereador/", painel_vereador, name="painel_vereador"),
