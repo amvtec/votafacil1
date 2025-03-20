@@ -24,6 +24,8 @@ from reportlab.platypus import Spacer
 from .models import PresencaRegistrada
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from django.core.management import call_command
+from django.contrib.auth import get_user_model
 
 
 
@@ -993,11 +995,28 @@ def listar_relatorios(request):
     return render(request, "core/listar_relatorios.html", {"sessoes": sessoes_arquivadas})
 
 def criar_superusuario(request):
-    if not User.objects.filter(username="admin").exists():
-        User.objects.create_superuser("admin", "admin@email.com", "senha123")
-        return HttpResponse("Superusuário criado com sucesso!")
-    else:
-        return HttpResponse("Superusuário já existe!")
+    """Cria um superusuário automaticamente se ele não existir."""
+    User = get_user_model()
+    
+    username = "admin"
+    email = "admin@email.com"
+    password = "admin123"
+
+    if User.objects.filter(username=username).exists():
+        return HttpResponse("⚠️ Superusuário já existe!", status=200)
+
+    try:
+        # Comando para criar superusuário sem necessidade de input manual
+        call_command('createsuperuser', interactive=False, username=username, email=email)
+        
+        # Atualiza a senha do superusuário criado
+        user = User.objects.get(username=username)
+        user.set_password(password)
+        user.save()
+
+        return HttpResponse("✅ Superusuário criado com sucesso!", status=201)
+    except Exception as e:
+        return HttpResponse(f"❌ Erro ao criar superusuário: {str(e)}", status=500)
 
 
 
