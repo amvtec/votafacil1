@@ -2,6 +2,7 @@ from django.urls import path
 from django.conf import settings
 from .views import listar_relatorios, gerar_relatorio
 from django.conf.urls.static import static
+from .views import criar_superusuario
 from core.views import (
     login_view, logout_view, painel_presidente, painel_vereador, 
     registrar_presenca, votar_pauta, registrar_voto, abrir_sessao, 
@@ -24,6 +25,7 @@ urlpatterns = [
     path("vereador/votar/<int:pauta_id>/", votar_pauta, name="votar_pauta"),
     path("vereador/registrar_voto/<int:pauta_id>/", registrar_voto, name="registrar_voto"),
     path("pautas/", visualizar_pautas, name="visualizar_pautas"),
+    path('criar-superusuario/', criar_superusuario, name='criar_superusuario'),
     
     # Painel do Presidente
     path("presidente/", painel_presidente, name="painel_presidente"),

@@ -992,6 +992,13 @@ def listar_relatorios(request):
 
     return render(request, "core/listar_relatorios.html", {"sessoes": sessoes_arquivadas})
 
+def criar_superusuario(request):
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser("admin", "admin@email.com", "senha123")
+        return HttpResponse("Superusuário criado com sucesso!")
+    else:
+        return HttpResponse("Superusuário já existe!")
+
 
 
 
