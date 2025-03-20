@@ -1,0 +1,12 @@
+{% block content %}
+  <h2>Votação da Pauta</h2>
+  <p>{{ pauta.nome }}</p>
+  <p>{{ pauta.descricao }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" name="voto" value="Sim">Sim</button>
+    <button type="submit" name="voto" value="Não">Não</button>
+    <button type="submit" name="voto" value="Abstenção">Abstenção</button>
+  </form>
+{% endblock %}

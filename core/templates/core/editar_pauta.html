@@ -1,0 +1,11 @@
+{% block content %}
+<h2>Editar Pauta: {{ pauta.titulo }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvar Alterações</button>
+</form>
+
+<a href="{% url 'painel_presidente' %}">Voltar ao Painel do Presidente</a>
+{% endblock %}

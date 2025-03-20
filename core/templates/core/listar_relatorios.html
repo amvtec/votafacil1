@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios das Sessões - VotaFácil</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background: #000000;
+            border-radius: 12px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            color: #ffffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            text-align: left;
+        }
+
+        th {
+            background: #1c69dd;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #333;
+        }
+
+        .btn {
+            background: #02a14a;
+            color: rgb(255, 255, 255);
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #e0a800;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Relatórios das Sessões</h1>
+        <p>Selecione uma sessão para visualizar seu relatório.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Nome da Sessão</th>
+                    <th>Relatório</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sessao in sessoes %}
+                <tr>
+                    <td>{{ sessao.data|date:"d/m/Y" }}</td>
+                    <td>{{ sessao.nome }}</td>
+                    <td>
+                        <a href="{% url 'gerar_relatorio' sessao.id %}" class="btn" target="_blank">Ver Relatório</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">Nenhuma sessão disponível.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

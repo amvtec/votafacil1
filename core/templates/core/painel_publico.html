@@ -1,0 +1,329 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Público - VotaFácil</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* 🔹 Tela de descanso (screensaver) ocupando toda a janela, inicialmente oculta */
+        #screensaver {
+            position: fixed;
+            top: 0; 
+            left: 0;
+            width: 50vw;
+            height: 100vh;
+            background: url('{% static "imagens/papel_de_parede.jpg" %}') no-repeat center center;
+            background-size: cover;
+            z-index: 9999; /* Fica por cima de tudo */
+            display: none; /* ou block se quiser exibir caso não haja sessão */
+        }
+
+        /* 🔹 Div que envolve todo seu painel público */
+        #painelPublico {
+            position: relative;
+            z-index: 1; /* Fica abaixo do screensaver se ele estiver visível */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .logo {
+            margin-bottom: 20px;
+        }
+        .titulo-camara {
+            font-size: 20px; 
+            font-weight: bold;
+            color: white; 
+            margin: 0;
+            white-space: nowrap;
+        }
+        .relogio-container {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            white-space: nowrap;
+        }
+        .conteudo {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .info-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 48%;
+        }
+        .sessao-info, .pauta-info {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+            width: 100%;
+        }
+        .pauta-info h2 {
+            color: #ffc107;
+        }
+        .sessao-info {
+            color: #ffc107;
+        }
+        .pauta-info p {
+            text-align: justify;
+            margin-top: 10px;
+        }
+        .vereadores-container {
+            width: 48%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            justify-content: center;
+        }
+        .vereador-card {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.3s;
+            border: 3px solid transparent;
+            background: #252525;
+            color: white;
+            position: relative;
+            height: 180px;
+            padding: 5px;
+        }
+        .presente {
+            background: #012e0b;
+        }
+        .ausente {
+            background: #86111d;
+        }
+        .vereador-card img {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 2px solid white;
+            margin-bottom: 1px;
+        }
+        .voto-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 95%;
+            padding: 3px;
+            border-radius: 3px;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            min-height: 20px;
+            margin-top: 5px;
+        }
+        .voto-sim-box {
+            background: #0da032;
+            color: rgb(0, 0, 0);
+        }
+        .voto-nao-box {
+            background: #dc3545;
+            color: white;
+        }
+        .voto-abstencao-box {
+            background: #ffc107;
+            color: black;
+        }
+        .votacao-info h3 {
+            margin-top: -130px;
+            margin-bottom: 5px;
+        }
+        .resultados-info, .presenca-info {
+            position: relative;
+            top: -105%;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .info-box {
+            width: 160px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: rgb(0, 0, 0);
+            text-align: center;
+        }
+        .presentes {
+            background: #28a745;
+        }
+        .ausentes {
+            background: #dc3545;
+        }
+        .votos-sim {
+            background: #0d5e20;
+        }
+        .votos-nao {
+            background: #dc3545;
+        }
+        .votos-abstencao {
+            background: #ffc107;
+            color: black;
+        }
+        @media (max-width: 992px) {
+            .conteudo {
+                flex-direction: column;
+                align-items: center;
+            }
+            .info-container, .vereadores-container {
+                width: 100%;
+            }
+            .vereadores-container {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🔹 DIV DO DESCANSO DE TELA -->
+    <div id="screensaver">
+        <img src="{% static 'img/papel_de_parede.jpg' %}" alt="Descanso de Tela" class="screensaver-img">
+    </div>
+    
+
+    <!-- 🔹 DIV COM SEU PAINEL PÚBLICO ORIGINAL -->
+    <div id="painelPublico">
+        <div class="container">
+            <div class="logo">
+                <h1 class="titulo-camara">Câmara Municipal de Wanderlândia</h1>
+                <div class="relogio-container">
+                    <span id="data-atual"></span> - <span id="hora-atual"></span>
+                </div>
+            </div>
+            <div class="conteudo">
+                <div class="info-container">
+                    <div class="sessao-info">
+                        <h2 id="sessao-nome">Carregando...</h2>
+                        <p id="sessao-descricao"></p>
+                    </div>
+                    <div class="pauta-info">
+                        <h2>Pauta em Votação</h2>
+                        <p id="pauta-titulo">Carregando...</p>
+                        <p id="pauta-descricao"></p>
+                        <h3 id="status-pauta" style="text-align: center; color: rgb(255, 166, 0);">
+                            🟡 Aguardando votação...
+                        </h3>
+                    </div>
+                </div>
+                <div class="vereadores-container" id="vereadores-lista"></div>
+            </div>
+
+            <div class="votacao-info">
+                <h3>Resultados Parciais</h3>
+                <div class="resultados-info">
+                    <div class="info-box votos-sim">👍 Sim: <span id="votos-sim">0</span></div>
+                    <div class="info-box votos-nao">👎 Não: <span id="votos-nao">0</span></div>
+                    <div class="info-box votos-abstencao">✋ Abstenção: <span id="votos-abstencao">0</span></div>
+                </div>
+                <div class="presenca-info">
+                    <div class="info-box presentes">🟢 Presentes: <span id="presentes-count">0</span></div>
+                    <div class="info-box ausentes">🔴 Ausentes: <span id="ausentes-count">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function atualizarPainel() {
+            fetch('/api/painel-publico/', { cache: 'no-store' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Status da Sessão:", data.sessao ? data.sessao.status : "Nenhuma sessão ativa");
+    
+                    // Se não há sessão ativa ou está arquivada, ativa descanso de tela
+                    if (!data.sessao || data.sessao.status === "Arquivada") {
+                        document.getElementById('screensaver').style.display = 'block';
+                        document.getElementById('painelPublico').style.display = 'none';
+                        return;
+                    }
+    
+                    // Se há sessão ativa, exibe painel e oculta descanso de tela
+                    document.getElementById('screensaver').style.display = 'none';
+                    document.getElementById('painelPublico').style.display = 'block';
+    
+                    // Atualiza informações no painel
+                    document.getElementById('sessao-nome').innerText = data.sessao.nome;
+                    document.getElementById('sessao-descricao').innerText = data.sessao.descricao;
+                    document.getElementById('pauta-titulo').innerText = data.pauta.titulo;
+                    document.getElementById('pauta-descricao').innerText = data.pauta.descricao;
+                    document.getElementById('status-pauta').innerText = data.pauta.status;
+    
+                    // Atualiza lista de vereadores
+                    let vereadoresHtml = '';
+                    let presentesCount = 0, ausentesCount = 0;
+    
+                    data.vereadores.forEach(vereador => {
+                        let votoClass = "voto-box";
+                        if (vereador.voto === "Sim") votoClass += " voto-sim-box";
+                        else if (vereador.voto === "Não") votoClass += " voto-nao-box";
+                        else if (vereador.voto === "Abstenção") votoClass += " voto-abstencao-box";
+    
+                        if (vereador.presente) presentesCount++;
+                        else ausentesCount++;
+    
+                        vereadoresHtml += `
+                            <div class="vereador-card ${vereador.presente ? 'presente' : 'ausente'}">
+                                <img src="${vereador.foto}" alt="Foto de ${vereador.nome}">
+                                <p>${vereador.nome}</p>
+                                <p>${vereador.presente ? '✅ Presente' : '❌ Ausente'}</p>
+                                <div class="${votoClass}">${vereador.voto !== "Nenhum" ? vereador.voto : ""}</div>
+                            </div>
+                        `;
+                    });
+    
+                    document.getElementById('vereadores-lista').innerHTML = vereadoresHtml;
+                    document.getElementById('presentes-count').innerText = presentesCount;
+                    document.getElementById('ausentes-count').innerText = ausentesCount;
+                    document.getElementById('votos-sim').innerText = data.votos_sim;
+                    document.getElementById('votos-nao').innerText = data.votos_nao;
+                    document.getElementById('votos-abstencao').innerText = data.votos_abstencao;
+                })
+                .catch(error => console.error('Erro ao atualizar painel:', error));
+        }
+    
+        // Atualiza automaticamente a cada 1s sem piscar a tela
+        setInterval(atualizarPainel, 3000);
+        atualizarPainel();
+    </script>
+    
+    <script>
+        function atualizarRelogio() {
+            const agora = new Date();
+            const opcoesData = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            const dataFormatada = agora.toLocaleDateString('pt-BR', opcoesData);
+            const horaFormatada = agora.toLocaleTimeString('pt-BR');
+            document.getElementById('data-atual').innerText = dataFormatada;
+            document.getElementById('hora-atual').innerText = horaFormatada;
+        }
+        setInterval(atualizarRelogio, 1000);
+        atualizarRelogio();
+    </script>
+    
+</body>
+</html>
+ 

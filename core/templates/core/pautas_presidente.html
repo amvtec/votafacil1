@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pautas do Dia - VotaFácil</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header h2 {
+            width: 100%;
+            text-align: center;
+            margin: 10px 0 15px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: #018528;
+            padding: 8px 10px;
+            font-size: 12px;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .pauta-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            border-left: 5px solid #007bff;
+            transition: transform 0.2s;
+            width: 89%;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .pauta-card:hover {
+            transform: scale(1.02);
+        }
+
+        .status {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 6px 10px;
+            border-radius: 4px;
+            text-align: center;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary { background: #007bff; color: white; }
+        .btn-primary:hover { background: #0056b3; }
+
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #b02a37; }
+
+        .btn-warning { background: #ffca28; color: black; }
+        .btn-warning:hover { background: #f1b400; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <a href="{% url 'painel_presidente' %}" class="back-btn">⬅️ Voltar</a>
+            <h2>📄 Pautas do Dia</h2>
+        </div>
+
+        {% for pauta in pautas %}
+        <div class="pauta-card">
+            <div class="status-container">
+                <div class="status {{ pauta.status|lower|cut:" " }}">{{ pauta.status }}</div>
+            </div>
+
+            <h3>📌 {{ pauta.titulo }}</h3>
+            <p>{{ pauta.descricao }}</p>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="abrirModal({{ pauta.id }})"
+                    {% if pauta.status in 'Em Votação,Aprovada,Rejeitada' %}disabled{% endif %}>
+                    🗳️ Votar
+                </button>
+
+                {% if pauta.arquivo_pdf %}
+                    <a href="{{ pauta.arquivo_pdf.url }}" target="_blank" class="btn btn-warning">📄 Ver PDF</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="modalVotacao" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">✖</span>
+            <h3>Escolha o Tipo de Votação</h3>
+            <div class="modal-buttons">
+                <button onclick="selecionarTipo('aberta')" class="btn btn-primary">🔓 Aberta</button>
+                <button onclick="selecionarTipo('fechada')" class="btn btn-danger">🔒 Fechada</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalModalidade" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">✖</span>
+            <h3>Escolha a Modalidade da Votação</h3>
+            <div class="modal-buttons">
+                <button onclick="iniciarVotacao('simples')" class="btn btn-success">✅ Simples</button>
+                <button onclick="iniciarVotacao('absoluta')" class="btn btn-warning">🏛️ Absoluta</button>
+                <button onclick="iniciarVotacao('qualificada')" class="btn btn-danger">⚖️ Qualificada</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pautaIdSelecionada = null;
+        let tipoVotacao = null;
+
+        function abrirModal(pautaId) {
+            pautaIdSelecionada = pautaId;
+            document.getElementById("modalVotacao").style.display = "flex";
+        }
+
+        function selecionarTipo(tipo) {
+            tipoVotacao = tipo;
+            document.getElementById("modalVotacao").style.display = "none";
+            document.getElementById("modalModalidade").style.display = "flex";
+        }
+
+        function iniciarVotacao(modalidade) {
+            window.location.href = `/presidente/iniciar_votacao/${pautaIdSelecionada}/${tipoVotacao}/${modalidade}/`;
+        }
+
+        function fecharModal() {
+            document.getElementById("modalVotacao").style.display = "none";
+            document.getElementById("modalModalidade").style.display = "none";
+        }
+    </script>
+
+</body>
+</html>

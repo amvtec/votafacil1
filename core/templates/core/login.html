@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Vota Fácil</title>
+    <style>
+        /* 🔹 Estilos Globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url("{% static 'img/background.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        /* 🔹 Efeito de Desfoque */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 1;
+        }
+
+        /* 🔹 Caixa de Login */
+        .login-container {
+            position: relative;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 340px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 15px;
+        }
+
+        .logo img {
+            max-width: 200px;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            font-size: 22px;
+            color: #333;
+        }
+
+        .input-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .input-container i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 35px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .login-container p {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .login-container p a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-container p a:hover {
+            color: #0056b3;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
+            color: #ddd;
+            z-index: 2;
+        }
+
+        .footer a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #007bff;
+        }
+
+        /* 🔹 Ícones Sociais */
+        .social-icons {
+            margin-top: 8px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: #007bff;
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 400px) {
+            .login-container {
+                padding: 25px 20px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            input, button {
+                font-size: 14px;
+            }
+
+            .social-icons a {
+                font-size: 18px;
+            }
+        }
+    </style>
+    <!-- 🔹 FontAwesome para os Ícones -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <!-- Container de Login -->
+    <div class="login-container">
+        <!-- Logotipo -->
+        <div class="logo">
+            <img src="{% static 'img/votafacil-logo.png' %}" alt="Logo Vota Fácil">
+        </div>
+
+        <h2>Faça seu login</h2>
+
+        {% if error %}
+            <p class="error-message">{{ error }}</p>
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="input-container">
+                <input type="text" name="cpf" placeholder="Digite seu CPF" required>
+            </div>
+            
+            <div class="input-container">
+                <input type="password" name="senha" placeholder="Digite sua senha" required>
+            </div>
+            
+            <button type="submit">Entrar</button>
+        </form>
+        
+        <p>Esqueceu sua senha? <a href="#">Recuperar senha</a></p>
+    </div>
+
+    <!-- 🔹 Rodapé -->
+    <div class="footer">
+        <p>Desenvolvido por <a href="https://www.seusite.com">Alexandre Martins Vieira ®</a></p>
+        
+        <!-- 🔹 Ícones Sociais -->
+        <div class="social-icons">
+            <a href="https://www.instagram.com" target="_blank" title="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://wa.me/seunumerowhatsapp" target="_blank" title="WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

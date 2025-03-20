@@ -1,0 +1,154 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pautas do Dia</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
+        }
+
+        .container {
+            width: 88%;
+            margin: 10px auto;
+            padding: 10px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+
+        .pauta-card {
+            width: 80%;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 1px;
+            margin-bottom: 10px;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .status {
+            font-weight: bold;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 3px;
+            display: inline-block;
+            margin: 0 auto 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-aprovada { background-color: #28a745; color: white; }
+        .status-rejeitada { background-color: #dc3545; color: white; }
+        .status-em-votacao { background-color: #007bff; color: white; }
+        .status-em-espera { background-color: #ffc107; color: black; }
+        .status-encerrada { background-color: #6c757d; color: white; }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+            transition: 0.3s;
+            font-size: 1em;
+        }
+
+        .button:hover { filter: brightness(0.9); }
+
+        .button.back {
+            background-color: #dc3545;
+            color: white;
+            display: block;
+            margin: 15px auto 0;
+            width: fit-content;
+        }
+
+        .button.pdf {
+            display: block;
+            margin: 0 auto;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+            transition: 0.3s;
+            font-size: 1em;
+        }
+
+        .no-pautas {
+            color: red;
+            font-weight: bold;
+        }
+
+        @media (max-width: 500px) {
+            body { font-size: 16px; }
+            .container { padding: 15px; margin: 0 auto; }
+            .pauta-card { margin-bottom: 10px; padding: 10px; }
+            .status { font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📋 Pautas do Dia</h2>
+
+    {% with pautas_abertas=pautas|dictsort:"sessao.status" %}
+        {% if pautas_abertas %}
+            {% for pauta in pautas_abertas %}
+                {% if pauta.sessao.status == "Em Andamento" %}
+                    <div class="pauta-card">
+                        {% if pauta.status == "Aprovada" %}
+                            <span class="status status-aprovada">✅ Aprovada</span>
+                        {% elif pauta.status == "Rejeitada" %}
+                            <span class="status status-rejeitada">❌ Rejeitada</span>
+                        {% elif pauta.status == "Em Votação" %}
+                            <span class="status status-em-votacao">🟢 Em Votação</span>
+                        {% elif pauta.status == "Em Espera" %}
+                            <span class="status status-em-espera">⏳ Em Espera</span>
+                        {% elif pauta.status == "Encerrada" %}
+                            <span class="status status-encerrada">🔒 Encerrada</span>
+                        {% endif %}
+
+                        <h3>📌 {{ pauta.titulo }}</h3>
+                        <p><strong>Descrição:</strong> {{ pauta.descricao }}</p>
+
+                        {% if pauta.arquivo_pdf %}
+                            <a href="{{ pauta.arquivo_pdf.url }}" target="_blank" class="button pdf">📄 Visualizar PDF</a>
+                        {% else %}
+                            <p>📄 PDF não disponível</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p class="no-pautas">🚫 Nenhuma pauta disponível no momento.</p>
+        {% endif %}
+    {% endwith %}
+
+    <a href="{% url 'painel_vereador' %}" class="button back">🔙 Voltar</a>
+</div>
+
+</body>
+</html>
+{% endblock %}

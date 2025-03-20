@@ -1,0 +1,15 @@
+<h2>Votação para a pauta: {{ pauta.nome }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <label>
+        <input type="radio" name="voto" value="Sim" required> Sim
+    </label>
+    <label>
+        <input type="radio" name="voto" value="Não" required> Não
+    </label>
+    <label>
+        <input type="radio" name="voto" value="Abstenção" required> Abstenção
+    </label>
+    <button type="submit">Votar</button>
+</form>

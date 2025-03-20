@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Presidente - VotaFácil</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            text-align: center;
+        }
+
+        h2, h3 {
+            color: #003972;
+        }
+
+        /* Botões no topo */
+        .top-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 10px 20px;
+            position: absolute;
+            top: 10px;
+            left: 0;
+            box-sizing: border-box;
+        }
+
+        .logout, .btn-presenca-top {
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .logout {
+            background: #dc3545;
+        }
+        .logout:hover {
+            background: #b02a37;
+        }
+
+        .btn-presenca-top {
+            background: #ff9800;
+        }
+        .btn-presenca-top:hover {
+            background: #e68900;
+        }
+
+        /* Ajuste da foto */
+        .profile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        .profile img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 4px solid #007bff;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: block;
+            width: 90%;
+            max-width: 250px;
+            padding: 12px;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: 0.3s ease-in-out;
+            text-align: center;
+            font-size: 16px;
+            margin: 8px auto;
+            font-weight: bold;
+        }
+
+        .btn-primary { background: #007bff; }
+        .btn-primary:hover { background: #0056b3; }
+
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #b02a37; }
+
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #1e7e34; }
+
+        .btn-dark { background: #6c757d; }
+        .btn-dark:hover { background: #5a6268; }
+
+        /* Botão presença reposicionado acima de "Sessões Encerradas" */
+        .btn-presenca {
+            background: #ff9800;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            display: block;
+            transition: 0.3s ease-in-out;
+            width: 90%;
+            max-width: 250px;
+            margin: 15px auto;
+        }
+
+        .btn-presenca:hover {
+            background: #e68900;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 600px) {
+            .top-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                position: relative;
+                padding: 0;
+                text-align: center;
+            }
+
+            .logout, .btn-presenca-top {
+                width: 100%;
+                text-align: center;
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+
+            .profile {
+                margin-top: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Botões no topo -->
+        <div class="top-buttons">
+            <a href="{% url 'logout' %}" class="logout">🚪 Sair</a>
+        </div>
+
+        <!-- Foto e informações -->
+        <div class="profile">
+            {% if presidente.foto %}
+                <img src="{{ presidente.foto.url }}" alt="Foto de {{ presidente.nome }}">
+            {% else %}
+                <img src="https://via.placeholder.com/130" alt="Sem foto disponível">
+            {% endif %}
+            <h2>{{ presidente.nome }}</h2>
+            <p><strong>🎗️ Partido:</strong> {{ presidente.partido }}</p>
+            <p><strong>👨‍⚖️ Função:</strong> Presidente</p>
+        </div>
+
+        <h3>📌 Gerenciamento de Sessões</h3>
+        <ul>
+            {% for sessao in sessoes %}
+            <li>
+                <strong>📅 {{ sessao.nome }}</strong> - <em>{{ sessao.status }}</em>
+                
+                {% if sessao.pauta_set.exists %}
+                    <p><strong>🗳️ Tipo de Votação:</strong> {{ sessao.pauta_set.first.tipo_votacao }}</p>
+                {% endif %}
+
+                {% if sessao.status == 'Arquivada' %}
+                    <a href="{% url 'abrir_sessao' sessao.id %}" class="btn btn-success">🔓 Reabrir Sessão</a>
+                    <a href="{% url 'gerar_relatorio' sessao.id %}" class="btn btn-primary">📄 Ver Relatório</a>
+                    <a href="{% url 'gerar_relatorio_presencas' sessao.id %}" class="btn btn-presenca">📋 Relatório de Presenças</a>
+                {% else %}
+                    <a href="{% url 'encerrar_sessao' sessao.id %}" class="btn btn-danger">🔒 Encerrar Sessão</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+
+        {% if sessao_ativa %}
+            <a href="{% url 'ver_presencas' sessao_ativa.id %}" class="btn btn-warning">👀 Ver Presenças</a>
+        {% endif %}
+
+        <!-- 🔹 Botão Presença agora acima do "Sessões Encerradas" -->
+        <a href="{% url 'registrar_presenca' %}" class="btn-presenca">✅ Registrar Presença</a>
+
+        <!-- 🔹 Botão para acessar Sessões Encerradas -->
+        <a href="{% url 'sessoes_encerradas' %}" class="btn btn-dark">📂 Sessões Encerradas</a>
+
+        <!-- 🔹 Botão para acessar Pautas do Dia -->
+        <a href="{% url 'pautas_presidente' %}" class="btn btn-primary">📄 Ver Pautas do Dia</a>
+
+    </div>
+
+</body>
+</html>

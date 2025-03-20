@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Presenças - VotaFácil</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        td {
+            background: #f9f9f9;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+        .btn-back { background: #6c757d; }
+        .btn-back:hover { background: #5a6268; }
+
+        .status-presente { color: green; font-weight: bold; }
+        .status-ausente { color: red; font-weight: bold; }
+
+        .vereador-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #007bff;
+        }
+
+        @media (max-width: 600px) {
+            th, td {
+                padding: 6px;
+                font-size: 12px;
+            }
+
+            .btn {
+                font-size: 14px;
+                padding: 8px 10px;
+            }
+
+            .vereador-img {
+                width: 30px;
+                height: 30px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>📋 Presenças na Sessão: {{ sessao.nome }}</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>📸 Foto</th>
+                    <th>👤 Vereador</th>
+                    <th>🏛️ Partido</th>
+                    <th>🕒 Presença</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vereador in vereadores %}
+                <tr>
+                    <td>
+                        {% if vereador.foto %}
+                            <img src="{{ vereador.foto.url }}" class="vereador-img" alt="{{ vereador.nome }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/40" class="vereador-img" alt="Sem foto">
+                        {% endif %}
+                    </td>
+                    <td>{{ vereador.nome }}</td>
+                    <td>{{ vereador.partido }}</td>
+                    <td>
+                        {% if vereador.presente %}
+                            <span class="status-presente">✅ Presente</span>
+                        {% else %}
+                            <span class="status-ausente">❌ Ausente</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{% url 'painel_presidente' %}" class="btn btn-back">🔙 Voltar ao Painel do Presidente</a>
+    </div>
+
+</body>
+</html>
