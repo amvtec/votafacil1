@@ -1,3 +1,4 @@
+{% load static %}
 {% block content %}
 <!DOCTYPE html>
 <html lang="pt">
@@ -174,7 +175,7 @@
     <a href="{% url 'logout' %}" class="logout">🚪 Sair</a>
 
     {% if vereador.foto %}
-        <img class="profile" src="{{ vereador.foto.url }}" alt="Foto do Vereador">
+        <img class="profile" src="{{ MEDIA_URL }}{{ vereador.foto.url }}" alt="Foto do Vereador">
     {% else %}
         <img class="profile" src="https://via.placeholder.com/100" alt="Sem foto">
     {% endif %}

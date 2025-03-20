@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -182,7 +183,7 @@
         <!-- Foto e informações -->
         <div class="profile">
             {% if presidente.foto %}
-                <img src="{{ presidente.foto.url }}" alt="Foto de {{ presidente.nome }}">
+                <img src="{{ MEDIA_URL }}{{ presidente.foto.url }}" alt="Foto de {{ presidente.nome }}">
             {% else %}
                 <img src="https://via.placeholder.com/130" alt="Sem foto disponível">
             {% endif %}

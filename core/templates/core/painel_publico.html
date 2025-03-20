@@ -288,7 +288,7 @@
     
                         vereadoresHtml += `
                             <div class="vereador-card ${vereador.presente ? 'presente' : 'ausente'}">
-                                <img src="${vereador.foto}" alt="Foto de ${vereador.nome}">
+                                <img src="/media/${vereador.foto}" alt="Foto de ${vereador.nome}">
                                 <p>${vereador.nome}</p>
                                 <p>${vereador.presente ? '✅ Presente' : '❌ Ausente'}</p>
                                 <div class="${votoClass}">${vereador.voto !== "Nenhum" ? vereador.voto : ""}</div>

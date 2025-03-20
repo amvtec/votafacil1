@@ -135,7 +135,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")  # Diretório onde os arquivos de m
 STATIC_URL = "/static/"
 STATICFILES_DIRS = []  # Diretório onde os arquivos estáticos serão armazenados
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+if not DEBUG:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 ALLOWED_HOSTS = ['*']
 
