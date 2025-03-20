@@ -1,24 +1,37 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 
 # Modelos de Vereador
 class Vereador(models.Model):
     nome = models.CharField(max_length=100)
     apelido = models.CharField(max_length=100)
-    cpf = models.CharField(max_length=11)
-    email = models.EmailField()
+    cpf = models.CharField(max_length=11, unique=True)
+    email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=15)
     partido = models.CharField(max_length=50)
     senha = models.CharField(max_length=100)
-    foto = models.ImageField(upload_to='fotos_vereadores/')
-    funcao = models.CharField(max_length=50, choices=[('Vereador', 'Vereador'), ('Presidente', 'Presidente'), ('Vice-Presidente', 'Vice-Presidente'), ('Primeiro Secretário', 'Primeiro Secretário')])
-    status = models.CharField(max_length=10, choices=[('Ativo', 'Ativo'), ('Inativo', 'Inativo')])
+    
+    # 📌 Agora a imagem será armazenada no Cloudinary
+    foto = CloudinaryField("foto", null=True, blank=True)
+
+    funcao = models.CharField(
+        max_length=50,
+        choices=[
+            ('Vereador', 'Vereador'), 
+            ('Presidente', 'Presidente'), 
+            ('Vice-Presidente', 'Vice-Presidente'), 
+            ('Primeiro Secretário', 'Primeiro Secretário')
+        ]
+    )
+    
+    status = models.CharField(
+        max_length=10, 
+        choices=[('Ativo', 'Ativo'), ('Inativo', 'Inativo')],
+        default='Ativo'
+    )
     
     def __str__(self):
         return self.nome
-
-
-# Modelos de Sessão
-from django.db import models
 
 class Sessao(models.Model):
     nome = models.CharField(max_length=100)
