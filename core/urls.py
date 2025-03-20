@@ -1,8 +1,9 @@
 from django.urls import path
 from django.conf import settings
-from .views import listar_relatorios, gerar_relatorio
 from django.conf.urls.static import static
-from .views import criar_superusuario
+from django.core.management import call_command
+from django.http import HttpResponse
+from .views import listar_relatorios, gerar_relatorio, criar_superusuario
 from core.views import (
     login_view, logout_view, painel_presidente, painel_vereador, 
     registrar_presenca, votar_pauta, registrar_voto, abrir_sessao, 
@@ -13,6 +14,14 @@ from core.views import (
     api_pautas_do_dia, pautas_do_dia, reabrir_votacao, sessoes_encerradas, 
     reabrir_sessao
 )
+
+# 🔹 Função para rodar migrações
+def rodar_migracoes(request):
+    try:
+        call_command("migrate")
+        return HttpResponse("Migrações aplicadas com sucesso!")
+    except Exception as e:
+        return HttpResponse(f"Erro ao rodar migrações: {str(e)}", status=500)
 
 urlpatterns = [
     # Autenticação
@@ -41,7 +50,6 @@ urlpatterns = [
     path("presidente/pautas/", pautas_presidente, name="pautas_presidente"),
     path('presidente/iniciar_votacao/<int:pauta_id>/<str:tipo_votacao>/<str:modalidade>/', iniciar_votacao, name='iniciar_votacao'),
     
-    
     # Sessões
     path("sessoes-encerradas/", sessoes_encerradas, name="sessoes_encerradas"),
     path("reabrir-sessao/<int:sessao_id>/", reabrir_sessao, name="reabrir_sessao"),
@@ -57,6 +65,9 @@ urlpatterns = [
     path("api/vereadores_presencas/", api_vereadores_presencas, name="api_vereadores_presencas"),
     path("api/painel-publico/", api_painel_publico, name="api_painel_publico"),
     path("api/pautas_do_dia/", api_pautas_do_dia, name="api_pautas_do_dia"),
+    
+    # Rodar migrações
+    path("rodar-migracoes/", rodar_migracoes, name="rodar_migracoes"),
 ]
 
 # 🔹 Configuração para servir arquivos de mídia (PDFs das pautas)
