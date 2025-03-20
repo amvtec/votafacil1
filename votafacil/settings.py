@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from django.contrib.messages import constants as messages
+import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-#m&o)_kwc#n!x4oxw-9i(i0n17ps7t*trq3h16*d%+-ke+de(k'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,14 +83,7 @@ WSGI_APPLICATION = 'votafacil.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'votafacil_local',
-        'USER': 'root',
-        'PASSWORD': 'Amv@1302',
-        'HOST': 'localhost',  # ou o IP do seu servidor MariaDB
-        'PORT': '3306',  # A porta padrão do MariaDB
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
 
 
@@ -130,7 +126,6 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-import os  # ✅ Importação necessária para manipular caminhos
 
 # Configuração para arquivos de mídia (imagens, PDFs, etc.)
 MEDIA_URL = "/media/"  # URL para acessar arquivos de mídia
@@ -140,6 +135,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")  # Diretório onde os arquivos de m
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]  # Diretório onde os arquivos estáticos serão armazenados
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ALLOWED_HOSTS = ['*']
 
