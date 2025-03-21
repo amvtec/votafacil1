@@ -14,6 +14,10 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 import os
 import dj_database_url
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+import cloudinary_storage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,7 +36,13 @@ ALLOWED_HOSTS = ["*"]
 
 ASGI_APPLICATION = 'seu_projeto.asgi.application'
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dspmsfjp2',
+    'API_KEY': '797699566468382',
+    'API_SECRET': '5u3AC6ig72ZV_CMV44bFsyUyAGI'
+}
 
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Application definition
 
