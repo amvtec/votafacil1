@@ -5,98 +5,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatórios das Sessões - VotaFácil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
             color: white;
             margin: 0;
-            padding: 20px;
-            text-align: center;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #333;
             max-width: 900px;
-            margin: auto;
-            padding: 20px;
-            background: #000000;
-            border-radius: 12px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+            width: 100%;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+            text-align: center;
         }
 
         h1 {
-            color: #ffffff;
+            color: #2575fc;
+            margin-bottom: 25px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         th, td {
-            padding: 10px;
-            border-bottom: 1px solid #444;
+            padding: 12px 10px;
+            border-bottom: 1px solid #ccc;
             text-align: left;
         }
 
         th {
-            background: #1c69dd;
+            background-color: #2575fc;
             color: white;
+            font-weight: 600;
+            text-align: center;
         }
 
-        tr:nth-child(even) {
-            background: #333;
+        td {
+            background-color: #f9f9f9;
+            font-size: 15px;
+        }
+
+        tr:hover td {
+            background-color: #eef3ff;
         }
 
         .btn {
-            background: #02a14a;
-            color: rgb(255, 255, 255);
-            padding: 8px 15px;
-            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s ease;
             display: inline-block;
-            margin-top: 10px;
+            white-space: nowrap;
         }
 
         .btn:hover {
-            background: #e0a800;
+            background-color: #218838;
         }
 
+        .no-sessoes {
+            color: red;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            th, td {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 10px;
+                margin-top: 5px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Relatórios das Sessões</h1>
-        <p>Selecione uma sessão para visualizar seu relatório.</p>
+<div class="container">
+    <h1>📄 Relatórios das Sessões</h1>
+    <p>Selecione uma sessão para visualizar seu relatório.</p>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Nome da Sessão</th>
-                    <th>Relatório</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for sessao in sessoes %}
+    <table>
+        <thead>
+            <tr>
+                <th>📅 Data</th>
+                <th>📌 Sessão</th>
+                <th>📊 Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sessao in sessoes %}
                 <tr>
                     <td>{{ sessao.data|date:"d/m/Y" }}</td>
                     <td>{{ sessao.nome }}</td>
-                    <td>
-                        <a href="{% url 'gerar_relatorio' sessao.id %}" class="btn" target="_blank">Ver Relatório</a>
+                    <td style="text-align: center;">
+                        <a href="{% url 'gerar_relatorio' sessao.id %}" class="btn" target="_blank">📄 Ver Relatório</a>
                     </td>
                 </tr>
-                {% empty %}
+            {% empty %}
                 <tr>
-                    <td colspan="3">Nenhuma sessão disponível.</td>
+                    <td colspan="3" class="no-sessoes">🚫 Nenhuma sessão disponível.</td>
                 </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 </body>
 </html>

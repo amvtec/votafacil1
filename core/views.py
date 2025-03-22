@@ -24,8 +24,7 @@ from reportlab.platypus import Spacer
 from .models import PresencaRegistrada
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from django.core.management import call_command
-from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -994,31 +993,22 @@ def listar_relatorios(request):
 
     return render(request, "core/listar_relatorios.html", {"sessoes": sessoes_arquivadas})
 
-def criar_superusuario(request):
-    """Cria um superusuário automaticamente se ele não existir."""
-    User = get_user_model()
+
+def atualizar_botoes_voto(request):
+    vereador = request.user.vereador
+    pautas_em_votacao = Pauta.objects.filter(status="Em Votação")
     
-    username = "admin"
-    email = "admin@email.com"
-    password = "admin123"
+    # Pauta ainda não votada por esse vereador
+    pautas_para_votar = [
+        pauta for pauta in pautas_em_votacao
+        if pauta.id not in vereador.votos.values_list('pauta_id', flat=True)
+    ]
 
-    if User.objects.filter(username=username).exists():
-        return HttpResponse("⚠️ Superusuário já existe!", status=200)
+    html = render_to_string("parciais/botoes_voto.html", {
+        "pautas": pautas_para_votar,
+        "vereador": vereador,
+    }, request=request)
 
-    try:
-        # Comando para criar superusuário sem necessidade de input manual
-        call_command('createsuperuser', interactive=False, username=username, email=email)
-        
-        # Atualiza a senha do superusuário criado
-        user = User.objects.get(username=username)
-        user.set_password(password)
-        user.save()
-
-        return HttpResponse("✅ Superusuário criado com sucesso!", status=201)
-    except Exception as e:
-        return HttpResponse(f"❌ Erro ao criar superusuário: {str(e)}", status=500)
-
-
-
+    return JsonResponse({"html": html})
 
 

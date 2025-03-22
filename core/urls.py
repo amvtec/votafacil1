@@ -1,9 +1,8 @@
 from django.urls import path
 from django.conf import settings
+from .views import listar_relatorios, gerar_relatorio
+from . import views
 from django.conf.urls.static import static
-from django.core.management import call_command
-from django.http import HttpResponse
-from .views import listar_relatorios, gerar_relatorio, criar_superusuario
 from core.views import (
     login_view, logout_view, painel_presidente, painel_vereador, 
     registrar_presenca, votar_pauta, registrar_voto, abrir_sessao, 
@@ -15,26 +14,10 @@ from core.views import (
     reabrir_sessao
 )
 
-# 🔹 Função para rodar migrações
-def rodar_migracoes(request):
-    try:
-        call_command("migrate")
-        return HttpResponse("Migrações aplicadas com sucesso!")
-    except Exception as e:
-        return HttpResponse(f"Erro ao rodar migrações: {str(e)}", status=500)
-    
-def rodar_collectstatic(request):
-    try:
-        call_command("collectstatic", "--noinput")
-        return HttpResponse("Arquivos estáticos coletados com sucesso!")
-    except Exception as e:
-        return HttpResponse(f"Erro ao rodar collectstatic: {str(e)}", status=500)
-
 urlpatterns = [
     # Autenticação
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
-    path("rodar-collectstatic/", rodar_collectstatic, name="rodar_collectstatic"),  
     
     # Painel do Vereador
     path("vereador/", painel_vereador, name="painel_vereador"),
@@ -42,7 +25,8 @@ urlpatterns = [
     path("vereador/votar/<int:pauta_id>/", votar_pauta, name="votar_pauta"),
     path("vereador/registrar_voto/<int:pauta_id>/", registrar_voto, name="registrar_voto"),
     path("pautas/", visualizar_pautas, name="visualizar_pautas"),
-    path('criar-superusuario/', criar_superusuario, name='criar_superusuario'),
+    path('atualizar-botoes-voto/', views.atualizar_botoes_voto, name='atualizar_botoes_voto'),
+
     
     # Painel do Presidente
     path("presidente/", painel_presidente, name="painel_presidente"),
@@ -57,6 +41,7 @@ urlpatterns = [
     path("presidente/reabrir_votacao/<int:pauta_id>/", reabrir_votacao, name="reabrir_votacao"),
     path("presidente/pautas/", pautas_presidente, name="pautas_presidente"),
     path('presidente/iniciar_votacao/<int:pauta_id>/<str:tipo_votacao>/<str:modalidade>/', iniciar_votacao, name='iniciar_votacao'),
+    
     
     # Sessões
     path("sessoes-encerradas/", sessoes_encerradas, name="sessoes_encerradas"),
@@ -73,9 +58,6 @@ urlpatterns = [
     path("api/vereadores_presencas/", api_vereadores_presencas, name="api_vereadores_presencas"),
     path("api/painel-publico/", api_painel_publico, name="api_painel_publico"),
     path("api/pautas_do_dia/", api_pautas_do_dia, name="api_pautas_do_dia"),
-    
-    # Rodar migrações
-    path("rodar-migracoes/", rodar_migracoes, name="rodar_migracoes"),
 ]
 
 # 🔹 Configuração para servir arquivos de mídia (PDFs das pautas)

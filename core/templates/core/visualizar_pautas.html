@@ -4,107 +4,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pautas do Dia</title>
+    <title>Pautas do Dia - VotaFácil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            font-size: 18px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            color: #333;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
 
         .container {
-            width: 88%;
-            margin: 10px auto;
-            padding: 10px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            text-align: center;
         }
 
         h2 {
-            color: #343a40;
+            color: #2575fc;
             margin-bottom: 20px;
         }
 
         .pauta-card {
-            width: 80%;
             background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 1px;
-            margin-bottom: 10px;
-            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            position: relative;
-            margin-left: auto;
-            margin-right: auto;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 90%;
+            text-align: center;
         }
 
         .status {
-            font-weight: bold;
-            font-size: 12px;
+            font-weight: 600;
+            font-size: 0.85em;
             padding: 4px 8px;
-            border-radius: 3px;
+            border-radius: 15px;
             display: inline-block;
-            margin: 0 auto 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            color: white;
         }
 
-        .status-aprovada { background-color: #28a745; color: white; }
-        .status-rejeitada { background-color: #dc3545; color: white; }
-        .status-em-votacao { background-color: #007bff; color: white; }
+        .status-aprovada { background-color: #28a745; }
+        .status-rejeitada { background-color: #dc3545; }
+        .status-em-votacao { background-color: #007bff; }
         .status-em-espera { background-color: #ffc107; color: black; }
-        .status-encerrada { background-color: #6c757d; color: white; }
+        .status-encerrada { background-color: #6c757d; }
 
         .button {
             display: inline-block;
-            padding: 12px 20px;
-            border-radius: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
             text-decoration: none;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 10px;
-            transition: 0.3s;
-            font-size: 1em;
-        }
-
-        .button:hover { filter: brightness(0.9); }
-
-        .button.back {
-            background-color: #dc3545;
             color: white;
-            display: block;
-            margin: 15px auto 0;
-            width: fit-content;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .button.pdf {
-            display: block;
-            margin: 0 auto;
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 10px;
-            transition: 0.3s;
-            font-size: 1em;
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
+
+        .button.back { background-color: #ff4b5c; margin-top: 15px; }
+        .button.pdf { background-color: #2575fc; margin-top: 10px; }
 
         .no-pautas {
-            color: red;
+            color: #ff4b5c;
             font-weight: bold;
         }
 
         @media (max-width: 500px) {
-            body { font-size: 16px; }
-            .container { padding: 15px; margin: 0 auto; }
-            .pauta-card { margin-bottom: 10px; padding: 10px; }
-            .status { font-size: 11px; }
+            .pauta-card { padding: 10px; }
+            .button { padding: 6px 12px; font-size: 0.8em; }
         }
     </style>
 </head>
@@ -131,7 +112,7 @@
                         {% endif %}
 
                         <h3>📌 {{ pauta.titulo }}</h3>
-                        <p><strong>Descrição:</strong> {{ pauta.descricao }}</p>
+                        <p>{{ pauta.descricao }}</p>
 
                         {% if pauta.arquivo_pdf %}
                             <a href="{{ pauta.arquivo_pdf.url }}" target="_blank" class="button pdf">📄 Visualizar PDF</a>

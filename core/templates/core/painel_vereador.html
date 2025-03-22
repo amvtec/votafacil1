@@ -1,194 +1,173 @@
-{% load static %}
 {% block content %}
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <!-- Permite escalonamento adequado em celulares -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exemplo Responsivo</title>
+    <title>Painel do Vereador - VotaFácil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-
-            /* Fonte maior para leitura confortável no celular */
-            font-size: 18px;
-        }
-
-        /* Container fluido: ocupa praticamente toda a tela em mobile, sem max-width */
-        .container {
-            width: 88%;
-            margin: 10px auto;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            color: #fff;
             padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
 
-        .message-box {
-            width: 90%;
-            padding: 12px;
-            margin: 10px auto;
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 800px;
+            width: 95%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            color: #333;
             text-align: center;
-            border-radius: 6px;
-            font-weight: bold;
-            display: none;
+            position: relative;
         }
-        .success-message { background-color: #28a745; color: white; }
+
+        .logout, .btn-voltar {
+            position: absolute;
+            top: 15px;
+            padding: 6px 10px;
+            font-size: 0.75em;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
 
         .logout {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            background-color: #dc3545;
-            color: white;
-            padding: 10px 10px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s ease-in-out;
-
-            /* Ajuste da fonte para ser proporcional ao body */
-            font-size: 0.9em; 
+            right: 15px;
+            background-color: #ff4b5c;
         }
-        .logout:hover { background-color: #b02a37; }
+        .logout:hover { background-color: #e84352; }
+
+        .btn-voltar {
+            left: 15px;
+            background-color: #2575fc;
+        }
+        .btn-voltar:hover { background-color: #1a5bb8; }
 
         img.profile {
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            border: 3px solid #4CAF50;
+            border: 4px solid #2575fc;
             margin-bottom: 10px;
+            object-fit: cover;
         }
-        
-        /* Botões maiores e fluidos */
+
         .button {
-            display: block;
             width: 90%;
             max-width: 300px;
-            padding: 14px;
             margin: 10px auto;
+            padding: 16px;
             border: none;
-            border-radius: 6px;
+            border-radius: 30px;
+            font-weight: 700;
             cursor: pointer;
-            text-align: center;
-            font-weight: bold;
-            transition: 0.3s ease-in-out;
-            font-size: 1em; 
-        }
-
-        /* 🔹 Botão "Voltar ao Painel do Presidente" */
-        .btn-voltar {
-            position: absolute;
-            top: 10px;  /* Distância do topo */
-            left: 10px; /* Distância da esquerda */
-            padding: 10px 10px; /* Reduz tamanho interno */
-            background-color: #007bff;
-            color: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 1.1em;
             text-decoration: none;
-            font-weight: bold;
-            border-radius: 4px;
-            font-size: 12px; /* Fonte menor */
-            transition: background 0.3s;
-            display: inline-block;
         }
 
-        /* 🔹 Efeito hover */
-        .btn-voltar:hover {
-            background-color: #0056b3;
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
-
-    /* 🔹 Efeito hover */
-        .btn-voltar:hover {
-            background-color: #0056b3;
+        .presenca {
+            background-color: #009b4d;
+            color: white;
+            margin-bottom: 25px; /* Aumentado */
         }
 
 
-        .button.presenca { background-color: #28a745; color: white; }
-        .button.sim { background-color: #4CAF50; color: white; }
-        .button.nao { background-color: #dc3545; color: white; }
-        .button.abstencao { background-color: #ffc107; color: black; }
-        .button.pdf { background-color: #007bff; color: white; display: flex; justify-content: center; align-items: center; }
-        .button.pautas { background-color: #17a2b8; color: white; }
+        .presenca { background-color: #00ca65; color: white; }
+        .sim { background-color: #28a745; color: white; }
+        .nao { background-color: #dc3545; color: white; }
+        .abstencao { background-color: #ffc107; color: black; }
+        .pdf { background-color: #2575fc; color: white; }
+        .pautas { background-color: #2575fc; color: white; }
 
         .pauta-card {
-            background-color: #f8f9fa;
+            background-color: #f1f3f6;
             padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.1);
-            text-align: left;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
-        h2, h3 {
-            color: #343a40;
-            margin: 10px 0;
+        form.voto-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
         }
 
-        /* Ajustes para telas muito pequenas */
+        /* Modal de mensagem */
+        .modal-mensagem {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #28a745;
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 9999;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            display: none;
+        }
+
         @media (max-width: 500px) {
-            body {
-                font-size: 16px; /* Ajuste se precisar ainda maior ou menor */
-            }
-
-            .logout {
-                top: 10px; 
-                right: 15px; 
-                padding: 8px 12px; 
-                font-size: 0.8em;
-            }
-
-            img.profile { 
-                width: 90px; 
-                height: 90px; 
-            }
-
-            .button {
-                font-size: 0.95em; 
-                padding: 12px; 
-            }
-            .pauta-card {
-                margin-bottom: 15px; 
-                padding: 16px;
-            }
+            .logout, .btn-voltar { font-size: 0.7em; }
+            img.profile { width: 90px; height: 90px; }
+            .button { font-size: 1em; padding: 14px; }
         }
     </style>
 </head>
 <body>
-
 <div class="container">
 
     {% if vereador.funcao == "Presidente" %}
-    <a href="{% url 'painel_presidente' %}" class="btn-voltar">🔙 Voltar</a>
+        <a href="{% url 'painel_presidente' %}" class="btn-voltar">🔙 Voltar</a>
     {% endif %}
 
     <a href="{% url 'logout' %}" class="logout">🚪 Sair</a>
 
     {% if vereador.foto %}
-        <img class="profile" src="{{ MEDIA_URL }}{{ vereador.foto.url }}" alt="Foto do Vereador">
+        <img class="profile" src="{{ vereador.foto.url }}" alt="Foto do Vereador">
     {% else %}
-        <img class="profile" src="https://via.placeholder.com/100" alt="Sem foto">
+        <img class="profile" src="https://via.placeholder.com/120" alt="Sem foto">
     {% endif %}
-    
-    <h2>👤 Painel do Vereador - {{ vereador.nome }}</h2>
+
+    <h2>👤 {{ vereador.nome }}</h2>
     <p><strong>🏛️ Partido:</strong> {{ vereador.partido }}</p>
     <p><strong>🎖️ Função:</strong> {{ vereador.funcao }}</p>
 
+    <!-- Mensagem do Django escondida, usada no modal -->
     {% if messages %}
         {% for message in messages %}
-            <div class="message-box success-message">{{ message }}</div>
+            <div class="success-message" style="display: none;">{{ message }}</div>
         {% endfor %}
     {% endif %}
+
+    <!-- Modal de Mensagem -->
+    <div id="modalMensagem" class="modal-mensagem">
+        <p id="mensagemTexto"></p>
+    </div>
 
     {% if not vereador.presenca %}
         <form method="post" action="{% url 'registrar_presenca' %}">
@@ -196,11 +175,11 @@
             <button type="submit" class="button presenca">✅ Registrar Presença</button>
         </form>
     {% else %}
-        <p style="color: green;"><strong>✅ Status:</strong> Presença registrada</p>
+        <p style="color: green;"><strong>✅ Presença Registrada</strong></p>
     {% endif %}
 
-    <a href="{% url 'visualizar_pautas' %}" class="button pautas">📋 Visualizar Pautas do Dia</a>
-    
+    <a href="{% url 'visualizar_pautas' %}" class="button pautas">📋 Pautas do Dia</a>
+
     <h3>📋 Pautas em Votação</h3>
 
     {% for pauta in pautas %}
@@ -210,13 +189,14 @@
                 <p>{{ pauta.descricao }}</p>
 
                 {% if pauta.arquivo_pdf %}
-                <a href="{{ pauta.arquivo_pdf.url }}" target="_blank" class="button pdf">📄 Visualizar PDF</a>
+                    <a href="{{ pauta.arquivo_pdf.url }}" target="_blank" class="button pdf">📄 Visualizar PDF</a>
                 {% else %}
-                <button class="button pdf" disabled>📄 PDF Não Disponível</button>
+                    <button class="button pdf" disabled>📄 PDF Indisponível</button>
                 {% endif %}
 
+                <div id="botoes-voto-{{ pauta.id }}"></div>
                 {% if pauta.id not in votos_realizados %}
-                    <form method="post" action="{% url 'registrar_voto' pauta.id %}" style="display:flex; justify-content:center; flex-wrap:wrap;">
+                    <form method="post" action="{% url 'registrar_voto' pauta.id %}" class="voto-form">
                         {% csrf_token %}
                         <button name="voto" value="Sim" class="button sim">👍 Sim</button>
                         <button name="voto" value="Não" class="button nao">👎 Não</button>
@@ -228,24 +208,42 @@
             </div>
         {% endif %}
     {% empty %}
-        <p style="text-align: center; color: red;">🚫 Nenhuma pauta em votação no momento.</p>
+        <p style="color: red;">🚫 Nenhuma pauta em votação no momento.</p>
     {% endfor %}
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    var messages = document.querySelectorAll(".message-box");
-    messages.forEach(function(message) {
-        message.style.display = "block";
-        setTimeout(function() {
-            message.style.display = "none";
-        }, 3000);
-    });
-});
+    // Exibe o modal de mensagem se houver
+    document.addEventListener("DOMContentLoaded", function () {
+        const mensagens = document.querySelectorAll(".success-message");
+        if (mensagens.length > 0) {
+            const modal = document.getElementById("modalMensagem");
+            const texto = mensagens[0].innerText;
+            document.getElementById("mensagemTexto").innerText = texto;
+            modal.style.display = "block";
 
-// Recarregar a página a cada 3 segundos (se for realmente necessário)
-setInterval(function() {
-    location.reload();
-}, 3000);
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 1500);
+        }
+    });
 </script>
+
+<script>
+    setInterval(() => {
+        fetch("{% url 'atualizar_botoes_voto' %}")
+            .then(response => response.json())
+            .then(data => {
+                data.pautas.forEach(pauta => {
+                    const container = document.getElementById(`botoes-voto-${pauta.id}`);
+                    if (container && pauta.votou) {
+                        container.innerHTML = "<p style='color:blue;'><strong>✅ Voto já registrado</strong></p>";
+                    }
+                });
+            });
+    }, 3000);
+</script>
+
+</body>
+</html>
 {% endblock %}
