@@ -779,6 +779,7 @@ def painel_publico(request):
         "sessao_aberta": True,
         "tipo_votacao": tipo_votacao,
         "votacao_aberta": votacao_aberta,
+        "camara": camara,
     }
 
     return render(request, "core/painel_publico.html", context)

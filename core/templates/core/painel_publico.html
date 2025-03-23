@@ -20,9 +20,8 @@
             position: fixed;
             top: 0; 
             left: 0;
-            width: 50vw;
+            width: 100vw;
             height: 100vh;
-            background: url('{% static "imagens/papel_de_parede.jpg" %}') no-repeat center center;
             background-size: cover;
             z-index: 9999; /* Fica por cima de tudo */
             display: none; /* ou block se quiser exibir caso não haja sessão */
@@ -200,11 +199,10 @@
 </head>
 <body>
 
-    <!-- 🔹 DIV DO DESCANSO DE TELA -->
-    <div id="screensaver">
-        <img src="{% static 'img/papel_de_parede.jpg' %}" alt="Descanso de Tela" class="screensaver-img">
+    <div id="screensaver"
+        style="background-image: url('{{ camara.papel_de_parede.url }}'); background-position: center; background-repeat: no-repeat; background-size: cover;">
     </div>
-    
+
 
     <!-- 🔹 DIV COM SEU PAINEL PÚBLICO ORIGINAL -->
     <div id="painelPublico">
