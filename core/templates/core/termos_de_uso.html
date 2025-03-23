@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Termos de Uso, Política de Privacidade e LGPD - VotaFácil</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            padding: 30px;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: #2575fc;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        a {
+            color: #2575fc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            margin-top: 30px;
+            display: inline-block;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Termos de Uso, Política de Privacidade e LGPD</h1>
+
+        <p>Bem-vindo ao VotaFácil! Este documento define as regras de uso do sistema, as práticas de privacidade adotadas e as disposições legais conforme a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).</p>
+
+        <h2>1. Finalidade do Sistema</h2>
+        <p>O VotaFácil é uma plataforma destinada à gestão, registro e exibição de votações legislativas em câmaras municipais, promovendo transparência e organização nas sessões.</p>
+
+        <h2>2. Dados Coletados</h2>
+        <p>Coletamos e armazenamos os seguintes dados dos vereadores:</p>
+        <ul>
+            <li>Nome completo</li>
+            <li>CPF</li>
+            <li>Partido</li>
+            <li>Função (ex: Presidente, Vereador)</li>
+            <li>Foto (opcional)</li>
+            <li>Senha para autenticação</li>
+            <li>Presenças em sessões</li>
+            <li>Votos registrados</li>
+        </ul>
+
+        <h2>3. Tratamento de Dados</h2>
+        <p>Os dados são utilizados exclusivamente para:</p>
+        <ul>
+            <li>Identificação e autenticação dos usuários</li>
+            <li>Gestão de sessões, presenças e votos</li>
+            <li>Geração de relatórios administrativos e públicos</li>
+            <li>Visualização de resultados no painel público (somente quando a votação for aberta)</li>
+        </ul>
+
+        <h2>4. LGPD - Lei Geral de Proteção de Dados</h2>
+        <p>O VotaFácil respeita a LGPD e garante aos usuários:</p>
+        <ul>
+            <li>Direito à confirmação do tratamento de dados</li>
+            <li>Direito ao acesso e à correção dos dados</li>
+            <li>Direito à anonimização ou eliminação dos dados pessoais, quando aplicável</li>
+            <li>Segurança e confidencialidade dos dados, com acesso restrito</li>
+        </ul>
+        <p>Os dados não são vendidos ou compartilhados com terceiros. Apenas as informações autorizadas são exibidas publicamente, respeitando a configuração de cada votação.</p>
+
+        <h2>5. Segurança</h2>
+        <p>Utilizamos práticas modernas de segurança e criptografia para proteger seus dados. A autenticação é feita com CPF e senha e os acessos são registrados para fins de auditoria.</p>
+
+        <h2>6. Termos de Uso</h2>
+        <ul>
+            <li>O acesso ao sistema é exclusivo para usuários autorizados (vereadores e administração)</li>
+            <li>O usuário é responsável pela veracidade das informações fornecidas</li>
+            <li>É proibido o compartilhamento de senhas</li>
+            <li>Qualquer uso indevido poderá acarretar em suspensão ou banimento do sistema</li>
+        </ul>
+
+        <h2>7. Alterações nesta Política</h2>
+        <p>Reservamo-nos o direito de atualizar os termos e a política sempre que necessário. Ao continuar utilizando o sistema, você concorda com as alterações publicadas.</p>
+
+        <h2>8. Contato</h2>
+        <p>Para dúvidas ou solicitações relacionadas à privacidade ou à LGPD, entre em contato pelo e-mail: <a href="mailto:contato@camaraon.com.br">contato@votafacil.com</a></p>
+
+        <a href="{% url 'login' %}" class="back-link">🔙 Voltar para o login</a>
+    </div>
+</body>
+</html>

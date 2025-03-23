@@ -18,6 +18,7 @@ urlpatterns = [
     # Autenticação
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
+    path('termos/', views.termos_de_uso, name='termos_de_uso'),
     
     # Painel do Vereador
     path("vereador/", painel_vereador, name="painel_vereador"),

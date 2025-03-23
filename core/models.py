@@ -201,6 +201,7 @@ class PresencaRegistrada(models.Model):
 class CamaraMunicipal(models.Model):
     nome = models.CharField(max_length=255)
     papel_de_parede = CloudinaryField('Imagem de fundo', blank=True, null=True)
+    logo = CloudinaryField('Logo da Câmara', blank=True, null=True)  # Novo campo
 
     def __str__(self):
         return self.nome

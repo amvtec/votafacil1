@@ -19,7 +19,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: url("{% static 'img/background.jpg' %}") no-repeat center center fixed;
+            background: url("{% if camara and camara.papel_de_parede %}{{ camara.papel_de_parede.url }}{% else %}{% static 'img/background.jpg' %}{% endif %}") no-repeat center center fixed;
             background-size: cover;
             position: relative;
         }
@@ -41,11 +41,11 @@
         .login-container {
             position: relative;
             z-index: 2;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 30px 25px;
-            border-radius: 12px;
+            background-color: rgb(255, 255, 255);
+            padding: 8px 25px;
+            border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            max-width: 340px;
+            max-width: 300px;
             width: 100%;
             text-align: center;
         }
@@ -199,8 +199,8 @@
     <div class="login-container">
         <!-- Logotipo -->
         <div class="logo">
-            <img src="{% static 'img/votafacil-logo.png' %}" alt="Logo Vota Fácil">
-        </div>
+            <img src="{% if camara and camara.logo %}{{ camara.logo.url }}{% else %}{% static 'img/votafacil-logo.png' %}{% endif %}" alt="Logo da Câmara">
+        </div>        
 
         <h2>Faça seu login</h2>
 
@@ -226,19 +226,24 @@
     </div>
 
     <!-- 🔹 Rodapé -->
-    <div class="footer">
-        <p>Desenvolvido por <a href="https://www.seusite.com">Alexandre Martins Vieira ®</a></p>
-        
-        <!-- 🔹 Ícones Sociais -->
-        <div class="social-icons">
-            <a href="https://www.instagram.com" target="_blank" title="Instagram">
-                <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://wa.me/seunumerowhatsapp" target="_blank" title="WhatsApp">
-                <i class="fab fa-whatsapp"></i>
-            </a>
-        </div>
+    <!-- 🔹 Rodapé -->
+<div class="footer">
+    <p>Desenvolvido por <a href="https://www.seusite.com">AALY SOLUÇÕES ®</a></p>
+    
+    <!-- 🔹 Ícones Sociais -->
+    <div class="social-icons">
+        <a href="https://www.instagram.com/alexandremartins_br?igsh=MWlrMmNoZXVlOXBseQ%3D%3D&utm_source=qr" target="_blank" title="Instagram">
+            <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://wa.link/kjdrtf" target="_blank" title="WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
     </div>
 
+    <!-- 🔹 Termos de Uso -->
+    <div style="margin-top: 10px; font-size: 12px;">
+        <a href="{% url 'termos_de_uso' %}" style="color: #ccc;">📜 Termos de Uso e Política de Privacidade</a>
+    </div>
+</div>
 </body>
 </html>

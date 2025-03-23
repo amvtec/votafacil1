@@ -30,11 +30,13 @@ from django.contrib.auth.decorators import login_required
 
 
 def login_view(request):
+    camara = CamaraMunicipal.objects.first()  # pega os dados da câmara (logo e papel de parede)
+
     if request.method == "POST":
         cpf = request.POST.get("cpf")
         senha = request.POST.get("senha")
 
-        print(f"Tentativa de login com CPF: {cpf} e Senha: {senha}")  # Log para debug
+        print(f"Tentativa de login com CPF: {cpf} e Senha: {senha}")
 
         try:
             vereador = Vereador.objects.get(cpf=cpf)
@@ -52,9 +54,13 @@ def login_view(request):
                 return redirect("painel_vereador")
         else:
             print("Erro: CPF ou senha incorretos.")
-            return render(request, "core/login.html", {"erro": "CPF ou senha incorretos"})
+            return render(
+                request,
+                "core/login.html",
+                {"erro": "CPF ou senha incorretos", "camara": camara}
+            )
 
-    return render(request, "core/login.html")
+    return render(request, "core/login.html", {"camara": camara})
 
 
 def logout_view(request):
@@ -1015,3 +1021,6 @@ def atualizar_botoes_voto(request):
     }, request=request)
 
     return JsonResponse({"html": html})
+
+def termos_de_uso(request):
+    return render(request, 'core/termos_de_uso.html')
