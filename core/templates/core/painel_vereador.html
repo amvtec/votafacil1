@@ -199,10 +199,10 @@
 <div class="container">
 
     {% if vereador.funcao == "Presidente" %}
-        <a href="{% url 'painel_presidente' %}" class="btn-voltar">🔙 Voltar</a>
+        <a href="{% url 'painel_presidente' %}" class="btn-voltar">◀️ Voltar</a>
     {% endif %}
 
-    <a href="{% url 'logout' %}" class="logout">🚪 Sair</a>
+    <a href="{% url 'logout' %}" class="logout">❎ Sair</a>
 
     {% if vereador.foto %}
         <img class="profile" src="{{ vereador.foto.url }}" alt="Foto do Vereador">
@@ -262,12 +262,26 @@
 
                 <div id="botoes-voto-{{ pauta.id }}"></div>
                 {% if pauta.id not in votos_realizados %}
-                    <form method="post" action="{% url 'registrar_voto' pauta.id %}" class="voto-form">
-                        {% csrf_token %}
+                <form method="post" action="{% url 'registrar_voto' pauta.id %}" class="voto-form">
+                    {% csrf_token %}
+                    
+                    <div class="icon-btn-wrapper">
                         <button name="voto" value="Sim" class="icon-btn verde" title="Votar Sim">👍</button>
+                        <div class="icon-label">Sim</div>
+                    </div>
+                
+                    <div class="icon-btn-wrapper">
                         <button name="voto" value="Não" class="icon-btn vermelho" title="Votar Não">👎</button>
+                        <div class="icon-label">Não</div>
+                    </div>
+                
+                    <div class="icon-btn-wrapper">
                         <button name="voto" value="Abstenção" class="icon-btn amarelo" title="Votar Abstenção">✋</button>
-                    </form>
+                        <div class="icon-label">Abstenção</div>
+                    </div>
+                
+                </form>
+                
                 {% else %}
                     <p style="color:blue;"><strong>✅ Voto já registrado</strong></p>
                 {% endif %}
