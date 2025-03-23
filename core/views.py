@@ -1012,3 +1012,6 @@ def atualizar_botoes_voto(request):
     return JsonResponse({"html": html})
 
 
+def painel_publico(request):
+    camara = CamaraMunicipal.objects.first()
+    return render(request, 'core/painel_publico.html', {'camara': camara})

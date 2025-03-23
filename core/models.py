@@ -198,3 +198,9 @@ class PresencaRegistrada(models.Model):
         return f"{self.vereador.nome} - {self.sessao.nome}"
 
 
+class CamaraMunicipal(models.Model):
+    nome = models.CharField(max_length=255)
+    papel_de_parede = CloudinaryField('Imagem de fundo', blank=True, null=True)
+
+    def __str__(self):
+        return self.nome
