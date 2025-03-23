@@ -1014,4 +1014,4 @@ def atualizar_botoes_voto(request):
 
 def painel_publico(request):
     camara = CamaraMunicipal.objects.first()
-    return render(request, 'core/painel_publico.html', {'camara': camara})
+    return render(request, 'painel_publico.html', {'camara': camara})
