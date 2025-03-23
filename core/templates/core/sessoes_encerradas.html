@@ -40,7 +40,7 @@
             border-radius: 20px;
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: 0.3s;
             margin-bottom: 15px;
             display: inline-block;
         }
@@ -51,7 +51,7 @@
             background-color: #fff;
             padding: 15px;
             border-radius: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             border-left: 5px solid #2575fc;
             transition: transform 0.2s;
@@ -61,38 +61,66 @@
             transform: translateY(-5px);
         }
 
-        .btn {
-            padding: 8px 12px;
-            border-radius: 20px;
-            text-decoration: none;
-            color: #fff;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            display: inline-block;
-            margin: 5px auto;  /* centraliza horizontalmente o botão */
-            width: 150px !important; /* ajuste a largura desejada aqui */
-            text-align: center;
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 15px;
         }
 
+        .icon-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
 
-        .btn-success { background: #28a745; }
-        .btn-success:hover { background: #1e7e34; }
+        .icon-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 26px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
 
-        .btn-primary { background: #2575fc; }
-        .btn-primary:hover { background: #1a5bb8; }
+        .icon-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        }
 
-        .btn-presenca { background: #ff9800; }
-        .btn-presenca:hover { background: #e68900; }
+        .icon-btn.verde { background-color: #28a745; }
+        .icon-btn.azul { background-color: #2575fc; }
+        .icon-btn.amarelo { background-color: #ff9800; color: #333; }
+
+        .icon-label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #444;
+        }
 
         @media (max-width: 600px) {
-            .btn {
-                width: 100%;
-                margin-bottom: 10px;
+            .icon-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 22px;
             }
 
-            .sessao-card {
-                padding: 10px;
+            .icon-buttons {
+                gap: 20px;
+            }
+
+            .icon-label {
+                font-size: 0.8em;
             }
         }
     </style>
@@ -101,7 +129,6 @@
 
 <div class="container">
     <a href="{% url 'painel_presidente' %}" class="back-btn">⬅️ Voltar</a>
-
     <h2>📂 Sessões Encerradas</h2>
 
     {% for sessao in sessoes %}
@@ -110,9 +137,20 @@
         <p><strong>Data:</strong> {{ sessao.data }}</p>
         <p><strong>Status:</strong> {{ sessao.status }}</p>
 
-        <a href="{% url 'reabrir_sessao' sessao.id %}" class="btn btn-success">🔓 Reabrir Sessão</a>
-        <a href="{% url 'gerar_relatorio' sessao.id %}" class="btn btn-primary">📄 Ver Relatório</a>
-        <a href="{% url 'gerar_relatorio_presencas' sessao.id %}" class="btn btn-presenca">📋 Presenças</a>
+        <div class="btn-group">
+            <div class="icon-btn-wrapper">
+                <a href="{% url 'reabrir_sessao' sessao.id %}" class="icon-btn verde" title="Reabrir Sessão">🔓</a>
+                <div class="icon-label">Reabrir</div>
+            </div>
+            <div class="icon-btn-wrapper">
+                <a href="{% url 'gerar_relatorio' sessao.id %}" class="icon-btn azul" title="Ver Relatório">📄</a>
+                <div class="icon-label">Relatório</div>
+            </div>
+            <div class="icon-btn-wrapper">
+                <a href="{% url 'gerar_relatorio_presencas' sessao.id %}" class="icon-btn amarelo" title="Presenças">📋</a>
+                <div class="icon-label">Presenças</div>
+            </div>
+        </div>
     </div>
     {% empty %}
     <p style="color: #dc3545;">🚫 Nenhuma sessão encerrada disponível.</p>

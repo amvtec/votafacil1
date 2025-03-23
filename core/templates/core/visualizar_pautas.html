@@ -59,24 +59,51 @@
         .status-em-espera { background-color: #ffc107; color: black; }
         .status-encerrada { background-color: #6c757d; }
 
-        .button {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9em;
+        .icon-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 15px;
+        }
+
+        .icon-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 26px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease;
             color: white;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            cursor: pointer;
         }
 
-        .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        .icon-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
         }
 
-        .button.back { background-color: #ff4b5c; margin-top: 15px; }
-        .button.pdf { background-color: #2575fc; margin-top: 10px; }
+        .icon-btn.azul { background-color: #2575fc; }
+        .icon-btn.vermelho { background-color: #ff4b5c; }
+
+        .icon-label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #444;
+        }
 
         .no-pautas {
             color: #ff4b5c;
@@ -85,7 +112,8 @@
 
         @media (max-width: 500px) {
             .pauta-card { padding: 10px; }
-            .button { padding: 6px 12px; font-size: 0.8em; }
+            .icon-btn { width: 70px; height: 70px; font-size: 22px; }
+            .icon-label { font-size: 0.8em; }
         }
     </style>
 </head>
@@ -114,11 +142,16 @@
                         <h3>📌 {{ pauta.titulo }}</h3>
                         <p>{{ pauta.descricao }}</p>
 
-                        {% if pauta.arquivo_pdf %}
-                            <a href="{{ pauta.arquivo_pdf.url }}" target="_blank" class="button pdf">📄 Visualizar PDF</a>
-                        {% else %}
-                            <p>📄 PDF não disponível</p>
-                        {% endif %}
+                        <div class="icon-buttons">
+                            {% if pauta.arquivo_pdf %}
+                                <div class="icon-btn-wrapper">
+                                    <a href="{{ pauta.arquivo_pdf.url }}" target="_blank" class="icon-btn azul">📄</a>
+                                    <div class="icon-label">PDF</div>
+                                </div>
+                            {% else %}
+                                <p>📄 PDF não disponível</p>
+                            {% endif %}
+                        </div>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -127,7 +160,12 @@
         {% endif %}
     {% endwith %}
 
-    <a href="{% url 'painel_vereador' %}" class="button back">🔙 Voltar</a>
+    <div class="icon-buttons" style="margin-top: 25px;">
+        <div class="icon-btn-wrapper">
+            <a href="{% url 'painel_vereador' %}" class="icon-btn vermelho">🔙</a>
+            <div class="icon-label">Voltar</div>
+        </div>
+    </div>
 </div>
 
 </body>

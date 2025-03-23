@@ -30,6 +30,22 @@
             position: relative;
         }
 
+        .vereador-info {
+            margin-top: -5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px; /* espaço pequeno entre os elementos */
+        }
+
+        .vereador-info h2,
+        .vereador-info p {
+            margin: 0;
+            padding: 0;
+            line-height: 1.3;
+        }
+
+
         .logout, .btn-voltar {
             position: absolute;
             top: 15px;
@@ -82,17 +98,7 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
-        .presenca {
-            background-color: #009b4d;
-            color: white;
-            margin-bottom: 25px; /* Aumentado */
-        }
-
-
         .presenca { background-color: #00ca65; color: white; }
-        .sim { background-color: #28a745; color: white; }
-        .nao { background-color: #dc3545; color: white; }
-        .abstencao { background-color: #ffc107; color: black; }
         .pdf { background-color: #2575fc; color: white; }
         .pautas { background-color: #2575fc; color: white; }
 
@@ -107,13 +113,12 @@
 
         form.voto-form {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            margin-top: 15px;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
 
-        /* Modal de mensagem */
         .modal-mensagem {
             position: fixed;
             top: 50%;
@@ -131,10 +136,62 @@
             display: none;
         }
 
+        .icon-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .icon-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            font-size: 36px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        }
+
+        .icon-btn.laranja { background-color: #00660e; }
+        .icon-btn.azul { background-color: #2575fc; }
+        .icon-btn.verde { background-color: #28a745; }
+        .icon-btn.vermelho { background-color: #dc3545; }
+        .icon-btn.amarelo { background-color: #ff6600; color: black; }
+
+        .icon-label {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #444;
+        }
+
         @media (max-width: 500px) {
             .logout, .btn-voltar { font-size: 0.7em; }
             img.profile { width: 90px; height: 90px; }
             .button { font-size: 1em; padding: 14px; }
+            .icon-buttons { gap: 20px; }
+            .icon-btn { width: 80px; height: 80px; font-size: 30px; }
         }
     </style>
 </head>
@@ -153,32 +210,41 @@
         <img class="profile" src="https://via.placeholder.com/120" alt="Sem foto">
     {% endif %}
 
-    <h2>👤 {{ vereador.nome }}</h2>
-    <p><strong>🏛️ Partido:</strong> {{ vereador.partido }}</p>
-    <p><strong>🎖️ Função:</strong> {{ vereador.funcao }}</p>
+    <div class="vereador-info">
+        <h2>{{ vereador.nome }}</h2>
+        <p><strong>🏛️ Partido:</strong> {{ vereador.partido }}</p>
+        <p><strong>🎖️ Função:</strong> {{ vereador.funcao }}</p>
+    </div>
+    
 
-    <!-- Mensagem do Django escondida, usada no modal -->
     {% if messages %}
         {% for message in messages %}
             <div class="success-message" style="display: none;">{{ message }}</div>
         {% endfor %}
     {% endif %}
 
-    <!-- Modal de Mensagem -->
     <div id="modalMensagem" class="modal-mensagem">
         <p id="mensagemTexto"></p>
     </div>
 
-    {% if not vereador.presenca %}
-        <form method="post" action="{% url 'registrar_presenca' %}">
-            {% csrf_token %}
-            <button type="submit" class="button presenca">✅ Registrar Presença</button>
-        </form>
-    {% else %}
-        <p style="color: green;"><strong>✅ Presença Registrada</strong></p>
-    {% endif %}
+    <div class="icon-buttons">
+        {% if not vereador.presenca %}
+            <div class="icon-btn-wrapper">
+                <form method="post" action="{% url 'registrar_presenca' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="icon-btn laranja" title="Registrar Presença">✅</button>
+                </form>
+                <div class="icon-label">Presença</div>
+            </div>
+        {% else %}
+            <p style="color: green;"><strong>✅ Presença Registrada</strong></p>
+        {% endif %}
 
-    <a href="{% url 'visualizar_pautas' %}" class="button pautas">📋 Pautas do Dia</a>
+        <div class="icon-btn-wrapper">
+            <a href="{% url 'visualizar_pautas' %}" class="icon-btn azul" title="Pautas do Dia">📋</a>
+            <div class="icon-label">Pautas</div>
+        </div>
+    </div>
 
     <h3>📋 Pautas em Votação</h3>
 
@@ -198,9 +264,9 @@
                 {% if pauta.id not in votos_realizados %}
                     <form method="post" action="{% url 'registrar_voto' pauta.id %}" class="voto-form">
                         {% csrf_token %}
-                        <button name="voto" value="Sim" class="button sim">👍 Sim</button>
-                        <button name="voto" value="Não" class="button nao">👎 Não</button>
-                        <button name="voto" value="Abstenção" class="button abstencao">✋ Abstenção</button>
+                        <button name="voto" value="Sim" class="icon-btn verde" title="Votar Sim">👍</button>
+                        <button name="voto" value="Não" class="icon-btn vermelho" title="Votar Não">👎</button>
+                        <button name="voto" value="Abstenção" class="icon-btn amarelo" title="Votar Abstenção">✋</button>
                     </form>
                 {% else %}
                     <p style="color:blue;"><strong>✅ Voto já registrado</strong></p>
@@ -213,7 +279,6 @@
 </div>
 
 <script>
-    // Exibe o modal de mensagem se houver
     document.addEventListener("DOMContentLoaded", function () {
         const mensagens = document.querySelectorAll(".success-message");
         if (mensagens.length > 0) {
@@ -221,10 +286,7 @@
             const texto = mensagens[0].innerText;
             document.getElementById("mensagemTexto").innerText = texto;
             modal.style.display = "block";
-
-            setTimeout(() => {
-                modal.style.display = "none";
-            }, 1500);
+            setTimeout(() => { modal.style.display = "none"; }, 1500);
         }
     });
 </script>

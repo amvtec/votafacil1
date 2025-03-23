@@ -59,15 +59,18 @@
             height: 140px;
             border-radius: 50%;
             border: 5px solid #2575fc;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             object-fit: cover;
         }
 
-        .btn-presenca {
-            background: #ff6f00;
-            color: white;
+        .profile h2 {
+            margin: 5px 0 2px;
         }
-        .btn-presenca:hover { background: #e65c00; }
+
+        .profile p {
+            margin: 2px 0;
+        }
+
 
         ul {
             list-style: none;
@@ -104,8 +107,50 @@
             margin-top: 40px;
         }
 
-        .footer-buttons .btn {
-            min-width: 140px;
+        .icon-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .icon-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            font-size: 36px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease;
+            color: white;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        }
+
+        .icon-btn.laranja { background-color: #ff6f00; }
+        .icon-btn.verde { background-color: #28a745; }
+        .icon-btn.amarelo { background-color: #ffc107; color: #333; }
+        .icon-btn.vermelha { background-color: #dc3545; }
+
+        .icon-label {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #444;
         }
 
         @media (max-width: 600px) {
@@ -113,33 +158,24 @@
                 width: 50%;
                 margin-bottom: 10px;
             }
-
-            .profile img {
-                width: 120px;
-                height: 120px;
-            }
-
-            li {
-                padding: 15px;
-            }
-
             .footer-buttons {
                 flex-direction: column;
                 align-items: center;
                 gap: 10px;
             }
-
-            .footer-buttons .btn {
-                width: 100%;
-                max-width: 300px;
+            .icon-buttons {
+                gap: 20px;
+            }
+            .icon-btn {
+                width: 90px;
+                height: 90px;
+                font-size: 30px;
             }
         }
     </style>
 </head>
 <body>
-
 <div class="container">
-
     <div class="profile">
         {% if presidente.foto %}
             <img src="{{ presidente.foto.url }}" alt="Foto de {{ presidente.nome }}">
@@ -149,20 +185,15 @@
         <h2>{{ presidente.nome }}</h2>
         <p><strong>🎗️ Partido:</strong> {{ presidente.partido }}</p>
         <p><strong>👨‍⚖️ Função:</strong> Presidente</p>
-
-        <!-- Botão registrar presença abaixo da foto -->
-        <a href="{% url 'registrar_presenca' %}" class="btn btn-presenca">✅ Registrar Presença</a>
     </div>
 
     <ul>
         {% for sessao in sessoes %}
         <li>
-            <strong>📅 {{ sessao.nome }}</strong> - <em>{{ sessao.status }}</em>
-
+            <strong>🗕️ {{ sessao.nome }}</strong> - <em>{{ sessao.status }}</em>
             {% if sessao.pauta_set.exists %}
                 <p><strong>🗳️ Tipo de Votação:</strong> {{ sessao.pauta_set.first.tipo_votacao }}</p>
             {% endif %}
-
             {% if sessao.status == 'Arquivada' %}
                 <a href="{% url 'abrir_sessao' sessao.id %}" class="btn btn-success">🔓 Reabrir Sessão</a>
                 <a href="{% url 'gerar_relatorio' sessao.id %}" class="btn btn-primary">📄 Ver Relatório</a>
@@ -178,13 +209,29 @@
         <a href="{% url 'ver_presencas' sessao_ativa.id %}" class="btn btn-warning">👀 Ver Presenças</a>
     {% endif %}
 
-    <a href="{% url 'sessoes_encerradas' %}" class="btn btn-dark">Sessões Encerradas</a>
-    <a href="{% url 'pautas_presidente' %}" class="btn btn-primary">Pautas do Dia</a>
+    <!-- LINHA 1 -->
+    <div class="icon-buttons">
+        <div class="icon-btn-wrapper">
+            <a href="{% url 'registrar_presenca' %}" class="icon-btn laranja" title="Registrar Presença">✅</a>
+            <div class="icon-label">Presença</div>
+        </div>
+        <div class="icon-btn-wrapper">
+            <a href="{% url 'pautas_presidente' %}" class="icon-btn amarelo" title="Pautas do Dia">📋</a>
+            <div class="icon-label">Pautas</div>
+        </div>
+    </div>
 
-    <div class="footer-buttons">
-        <a href="{% url 'logout' %}" class="btn logout">🚪 Sair</a>
+    <!-- LINHA 2 -->
+    <div class="icon-buttons">
+        <div class="icon-btn-wrapper">
+            <a href="{% url 'sessoes_encerradas' %}" class="icon-btn verde" title="Sessões Encerradas">📁</a>
+            <div class="icon-label">Sessões</div>
+        </div>
+        <div class="icon-btn-wrapper">
+            <a href="{% url 'logout' %}" class="icon-btn vermelha" title="Sair">🚪</a>
+            <div class="icon-label">Sair</div>
+        </div>
     </div>
 </div>
-
 </body>
 </html>
