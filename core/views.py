@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.timezone import now
-from .models import Sessao, Vereador, Pauta, Votacao, Cronometro, Relatorio
+from .models import Sessao, Vereador, Pauta, Votacao, Cronometro, Relatorio, CamaraMunicipal
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 import tempfile
@@ -701,15 +701,19 @@ def painel_publico(request):
     e a visibilidade dos votos sejam corretamente refletidos.
     """
 
+    # Busca a única Câmara cadastrada
+    camara = CamaraMunicipal.objects.first()
+
     # Buscar a sessão ativa (Em Andamento)
     sessao = Sessao.objects.filter(status="Em Andamento").first()
 
-    # Se não houver sessão ativa, renderizar com valores padrão
+    # Se não houver sessão ativa, renderiza o screensaver com imagem da câmara
     if not sessao:
         return render(
             request,
             "core/painel_publico.html",
             {
+                "camara": camara,  # envia imagem de fundo
                 "sessao": None,
                 "pauta": None,
                 "vereadores": [],
@@ -730,12 +734,13 @@ def painel_publico(request):
     for vereador in vereadores:
         vereador.presente = Votacao.objects.filter(vereador=vereador, pauta=None, presenca=True).exists()
 
-    # Se não houver pauta em votação, definir valores padrão para evitar erro
+    # Se não houver pauta em votação, exibe painel sem votação
     if not pauta:
         return render(
             request,
             "core/painel_publico.html",
             {
+                "camara": camara,
                 "sessao": sessao,
                 "pauta": None,
                 "vereadores": vereadores,
@@ -748,24 +753,23 @@ def painel_publico(request):
             }
         )
 
-    # Buscar os votos da pauta em votação
+    # Contagem dos votos
     votos_sim = Votacao.objects.filter(pauta=pauta, voto="Sim").count()
     votos_nao = Votacao.objects.filter(pauta=pauta, voto="Não").count()
     votos_abstencao = Votacao.objects.filter(pauta=pauta, voto="Abstenção").count()
 
-    # Tipo de votação (Simples, Absoluta, Qualificada)
+    # Tipo e visibilidade da votação
     tipo_votacao = pauta.tipo_votacao
-
-    # Verifica se a votação é aberta ou fechada
     votacao_aberta = pauta.votacao_aberta
 
-    # Garante que os votos só são exibidos se a votação for aberta
+    # Exibe os votos apenas se for votação aberta
     votos_sim_exibido = votos_sim if votacao_aberta else "Oculto"
     votos_nao_exibido = votos_nao if votacao_aberta else "Oculto"
     votos_abstencao_exibido = votos_abstencao if votacao_aberta else "Oculto"
 
-    # Enviar os dados para o template
+    # Envia para o template
     context = {
+        "camara": camara,
         "sessao": sessao,
         "pauta": pauta,
         "vereadores": vereadores,
@@ -1010,8 +1014,3 @@ def atualizar_botoes_voto(request):
     }, request=request)
 
     return JsonResponse({"html": html})
-
-
-def painel_publico(request):
-    camara = CamaraMunicipal.objects.first()
-    return render(request, 'painel_publico.html', {'camara': camara})
