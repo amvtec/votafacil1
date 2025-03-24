@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Vereador, Sessao, Pauta, Votacao, Relatorio, Cronometro
 from .models import CamaraMunicipal
+from .models import Live  
 
 # Registrando os modelos para aparecerem no painel de administração
 admin.site.register(Vereador)
