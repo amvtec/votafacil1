@@ -71,7 +71,6 @@
             margin: 2px 0;
         }
 
-
         ul {
             list-style: none;
             padding: 0;
@@ -82,7 +81,7 @@
             margin-bottom: 15px;
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .btn-success { background: #32cd32; }
@@ -132,14 +131,14 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transition: transform 0.2s ease;
             color: white;
         }
 
         .icon-btn:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
         }
 
         .icon-btn.laranja { background-color: #ff6f00; }
@@ -208,6 +207,9 @@
     {% if sessao_ativa %}
         <a href="{% url 'ver_presencas' sessao_ativa.id %}" class="btn btn-warning">👀 Ver Presenças</a>
     {% endif %}
+
+    <!-- Botão para acessar o cronômetro -->
+    <a href="{% url 'cronometro_publico' %}" class="btn btn-primary" style="margin-top: 30px;">⏱️ Acessar Cronômetro</a>
 
     <!-- LINHA 1 -->
     <div class="icon-buttons">

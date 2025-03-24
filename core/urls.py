@@ -27,6 +27,14 @@ urlpatterns = [
     path("vereador/registrar_voto/<int:pauta_id>/", registrar_voto, name="registrar_voto"),
     path("pautas/", visualizar_pautas, name="visualizar_pautas"),
     path('atualizar-botoes-voto/', views.atualizar_botoes_voto, name='atualizar_botoes_voto'),
+    path('cronometro-publico/', views.cronometro_publico, name='cronometro_publico'),
+    path('cronometro/iniciar/<int:vereador_id>/', views.iniciar_cronometro, name='iniciar_cronometro'),
+    path('cronometro/pausar/<int:vereador_id>/', views.pausar_cronometro, name='pausar_cronometro'),
+    path('cronometro/parar/<int:vereador_id>/', views.parar_cronometro, name='parar_cronometro'),
+    path('cronometro/adicionar/<int:vereador_id>/', views.adicionar_tempo, name='adicionar_tempo'),
+    path('painel-cronometro/', views.painel_cronometro, name='painel_cronometro'),
+    path('api/cronometro/tempo/<int:vereador_id>/', views.tempo_restante, name='tempo_restante'),
+    path('api/cronometro-ativo/', views.api_cronometro_ativo, name='api_cronometro_ativo'),
 
     
     # Painel do Presidente
@@ -42,6 +50,7 @@ urlpatterns = [
     path("presidente/reabrir_votacao/<int:pauta_id>/", reabrir_votacao, name="reabrir_votacao"),
     path("presidente/pautas/", pautas_presidente, name="pautas_presidente"),
     path('presidente/iniciar_votacao/<int:pauta_id>/<str:tipo_votacao>/<str:modalidade>/', iniciar_votacao, name='iniciar_votacao'),
+    path('api/sessao-ativa/', views.api_sessao_ativa, name='api_sessao_ativa'),
     
     
     # Sessões

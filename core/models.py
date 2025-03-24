@@ -205,3 +205,10 @@ class CamaraMunicipal(models.Model):
 
     def __str__(self):
         return self.nome
+    
+class Live(models.Model):
+    nome = models.CharField(max_length=255)
+    link = models.URLField()
+
+    def __str__(self):
+        return self.nome

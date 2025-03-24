@@ -20,8 +20,9 @@
             position: fixed;
             top: 0; 
             left: 0;
-            width: 100vw;
+            width: 50vw;
             height: 100vh;
+            background: url('{% static "imagens/papel_de_parede.jpg" %}') no-repeat center center;
             background-size: cover;
             z-index: 9999; /* Fica por cima de tudo */
             display: none; /* ou block se quiser exibir caso não haja sessão */
@@ -199,10 +200,11 @@
 </head>
 <body>
 
-    <div id="screensaver"
-        style="background-image: url('{{ camara.papel_de_parede.url }}'); background-position: center; background-repeat: no-repeat; background-size: cover;">
+    <!-- 🔹 DIV DO DESCANSO DE TELA -->
+    <div id="screensaver">
+        <img src="{% static 'img/papel_de_parede.jpg' %}" alt="Descanso de Tela" class="screensaver-img">
     </div>
-
+    
 
     <!-- 🔹 DIV COM SEU PAINEL PÚBLICO ORIGINAL -->
     <div id="painelPublico">
@@ -321,6 +323,19 @@
         setInterval(atualizarRelogio, 1000);
         atualizarRelogio();
     </script>
+
+<script>
+    setInterval(function() {
+        fetch("/api/cronometro-ativo/")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "Iniciado") {
+                    window.location.href = "/cronometro-publico/";
+                }
+            });
+    }, 2000);
+    </script>
+    
     
 </body>
 </html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cronômetro Público</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000102;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .top-bar {
+            background-color: #1e293b;
+            padding: 10px 30px;
+            font-size: 1rem;
+            color: #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .barra-sessao {
+            background-color: #ffffff;
+            color: #000000;
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 10px 30px;
+            text-align: left;
+        }
+
+        .painel {
+            display: flex;
+            padding: 40px;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 112px);
+        }
+
+        .foto {
+            width: 280px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .nome {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        .funcao-partido {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .funcao {
+            background-color: #ffffff;
+            color: #0f172a;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 4px 12px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .partido {
+            background-color: #22c55e;
+            color: #0f172a;
+            font-weight: bold;
+            font-size: 2rem;
+            padding: 5px 8px;
+            border-radius: 20px;
+        }
+
+        .relogio {
+            font-size: 10rem;
+            font-weight: bold;
+            color: #facc15;
+            margin: 30px 0;
+            transition: 0.3s;
+        }
+
+        .relogio.urgente {
+            color: red;
+            animation: piscar 1s infinite;
+        }
+
+        .tempos {
+            display: flex;
+            gap: 40px;
+        }
+
+        .tempo-box {
+            background-color: #011536;
+            padding: 20px 30px;
+            border-radius: 8px;
+            border-left: 6px solid #38bdf8;
+        }
+
+        .tempo-box label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .tempo-box span {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .live-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 8px;
+            width: 350px;
+            height: 300px;
+        }
+
+        .live-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+        }
+
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @media (max-width: 768px) {
+            .painel {
+                flex-direction: column;
+                padding: 20px;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .foto {
+                width: 200px;
+                height: 260px;
+            }
+
+            .nome {
+                font-size: 1rem;
+            }
+
+            .relogio {
+                font-size: 8rem;
+                margin: 40px 0;
+                line-height: 1.1;
+            }
+
+            .tempos {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Topo -->
+<div class="top-bar">
+    <div>
+        <strong>PAINEL ELETRÔNICO DA CÂMARA MUNICIPAL DE VEREADORES</strong>
+    </div>
+    <div id="hora-data">DATA: --/--/---- - --:--:--</div>
+</div>
+
+<!-- Sessão -->
+<div class="barra-sessao" id="barra-sessao">
+    SESSÃO EM ANDAMENTO
+</div>
+
+<!-- Painel ativo -->
+<div class="painel" id="painel-conteudo" style="display: none;">
+    <img src="" class="foto" id="vereador-foto" alt="Vereador">
+    <div class="info">
+        <div class="nome">
+            <span id="vereador-nome"></span>
+        </div>
+        <div class="funcao-partido">
+            <div class="funcao" id="vereador-funcao">VEREADOR</div>
+            <div class="partido" id="vereador-partido"></div>
+        </div>
+        <div id="contador" class="relogio">--:--</div>
+        <div class="tempos">
+            <div class="tempo-box">
+                <label>TEMPO EXTRA</label>
+                <span id="tempo-extra">00:00</span>
+            </div>
+            <div class="tempo-box">
+                <label>TEMPO PARTE</label>
+                <span id="tempo-parte">00:00</span>
+            </div>            
+        </div>
+    </div>
+
+    <!-- Live Video Section -->
+        <!-- Live Video Section -->
+{% if live_link %}
+<div class="live-container" id="live-video">
+    <iframe id="live-iframe" src="{{ live_link }}" title="Transmissão ao Vivo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+{% else %}
+<div class="live-container" id="live-video">
+    <p>Não há live disponível no momento.</p>
+</div>
+{% endif %}
+
+</div>
+
+<!-- Mensagem de espera -->
+<div class="painel" id="mensagem-sem-fala" style="justify-content: center;">
+    <div class="nome">Nenhum vereador está com a fala neste momento.</div>
+</div>
+
+<script>
+    const nomeEl = document.getElementById("vereador-nome");
+    const partidoEl = document.getElementById("vereador-partido");
+    const funcaoEl = document.getElementById("vereador-funcao");
+    const fotoEl = document.getElementById("vereador-foto");
+    const contador = document.getElementById("contador");
+    const tempoExtraEl = document.getElementById("tempo-extra");
+    const tempoParteEl = document.getElementById("tempo-parte");
+    const liveIframe = document.getElementById("live-iframe");
+
+    const painel = document.getElementById("painel-conteudo");
+    const mensagem = document.getElementById("mensagem-sem-fala");
+    const barraSessao = document.getElementById("barra-sessao");
+
+    let tempoRestante = null;
+    let status = null;
+    let vereadorAtual = null;
+    let liveUrl = "";  // URL da live da sessão
+
+    function formatarTempo(segundos) {
+        const min = Math.floor(segundos / 60);
+        const sec = segundos % 60;
+        return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+
+    async function buscarDados() {
+        try {
+            const res = await fetch("/api/cronometro-ativo/");
+            const data = await res.json();
+
+            if (!data.tempo_restante || data.status === "Finalizado") {
+                window.location.href = "/painel_publico/";
+                return;
+            }
+
+            if (data.vereador_nome !== vereadorAtual) {
+                vereadorAtual = data.vereador_nome;
+                nomeEl.innerText = data.vereador_nome;
+                partidoEl.innerText = data.vereador_partido;
+                funcaoEl.innerText = data.vereador_funcao || "VEREADOR";
+                fotoEl.src = data.vereador_foto;
+            }
+
+            tempoRestante = data.tempo_restante;
+            status = data.status;
+            tempoExtraEl.innerText = formatarTempo(data.tempo_extra);
+            tempoParteEl.innerText = formatarTempo(data.tempo_restante);
+
+            painel.style.display = "flex";
+            mensagem.style.display = "none";
+        } catch (error) {
+            console.error("Erro ao buscar cronômetro:", error);
+            window.location.href = "/painel_publico/";
+        }
+    }
+
+    async function atualizarSessaoAtiva() {
+        try {
+            const res = await fetch("/api/sessao_ativa/");
+            const data = await res.json();
+            if (data && data.nome) {
+                barraSessao.innerText = `SESSÃO EM ANDAMENTO: ${data.nome}`;
+                // URL da transmissão ao vivo
+                liveUrl = `/sessao/${data.nome.toLowerCase().replace(/\s+/g, '-')}/live`;
+                liveIframe.src = liveUrl;  // Atualiza o iframe para mostrar a transmissão ao vivo
+            }
+        } catch (error) {
+            console.warn("Sessão não pôde ser carregada.");
+        }
+    }
+
+    function atualizarContador() {
+        if (tempoRestante === null || status !== "Iniciado") return;
+
+        tempoRestante = Math.max(0, tempoRestante - 1);
+        contador.innerText = formatarTempo(tempoRestante);
+        tempoParteEl.innerText = formatarTempo(tempoRestante);
+
+        if (tempoRestante <= 15 && tempoRestante > 0) {
+            contador.classList.add("urgente");
+        } else {
+            contador.classList.remove("urgente");
+        }
+
+        if (tempoRestante === 0) {
+            contador.innerText = "00:00";
+        }
+    }
+
+    function atualizarHora() {
+        const agora = new Date();
+        const dia = String(agora.getDate()).padStart(2, '0');
+        const mes = String(agora.getMonth() + 1).padStart(2, '0');
+        const ano = agora.getFullYear();
+        const horas = String(agora.getHours()).padStart(2, '0');
+        const minutos = String(agora.getMinutes()).padStart(2, '0');
+        const segundos = String(agora.getSeconds()).padStart(2, '0');
+        document.getElementById("hora-data").innerText =
+            `DATA: ${dia}/${mes}/${ano} - ${horas}:${minutos}:${segundos}`;
+    }
+
+    setInterval(atualizarContador, 1000);
+    setInterval(buscarDados, 3000);
+    setInterval(atualizarSessaoAtiva, 10000);
+    setInterval(atualizarHora, 1000);
+
+    buscarDados();
+    atualizarSessaoAtiva();
+</script>
+
+</body>
+</html>

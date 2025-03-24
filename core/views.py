@@ -9,6 +9,7 @@ import tempfile
 import os
 from django.conf import settings
 from .forms import PautaForm
+from django.utils import timezone
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -1024,3 +1025,179 @@ def atualizar_botoes_voto(request):
 
 def termos_de_uso(request):
     return render(request, 'core/termos_de_uso.html')
+
+def cronometro_publico(request):
+    try:
+        cronometro = Cronometro.objects.filter(status='Iniciado').latest('data_inicio')
+        vereador = cronometro.vereador
+    except Cronometro.DoesNotExist:
+        return redirect('painel_publico')  # <- se não tiver, volta pro painel normal
+
+    sessao = Sessao.objects.filter(status="Em Andamento").first()
+
+    return render(request, 'core/cronometro_publico.html', {
+        'cronometro': cronometro,
+        'vereador': vereador,
+        'sessao': sessao
+    })
+
+
+def iniciar_cronometro(request, vereador_id):
+    if request.method == "POST":
+        try:
+            tempo_padrao = 300  # 5 minutos
+            agora = timezone.now()
+
+            # Finaliza os cronômetros anteriores
+            Cronometro.objects.exclude(vereador_id=vereador_id).update(
+                status='Finalizado',
+                tempo_restante=0,
+                tempo_extra=0
+            )
+
+            cronometro, created = Cronometro.objects.get_or_create(
+                vereador_id=vereador_id,
+                defaults={
+                    'tempo_inicial': tempo_padrao,
+                    'tempo_restante': tempo_padrao,
+                    'tempo_extra': 0,
+                    'status': 'Iniciado',
+                    'data_inicio': agora
+                }
+            )
+
+            if not created:
+                if cronometro.status == 'Pausado':
+                    cronometro.data_inicio = agora
+                elif cronometro.status == 'Finalizado':
+                    cronometro.tempo_restante = tempo_padrao
+                    cronometro.tempo_extra = 0
+                    cronometro.data_inicio = agora
+
+                cronometro.status = 'Iniciado'
+                cronometro.save()
+
+            return JsonResponse({
+                'status': cronometro.status,
+                'tempo_restante': cronometro.tempo_restante
+            })
+
+        except Exception as e:
+            print("ERRO AO INICIAR CRONÔMETRO:", e)
+            return JsonResponse({'erro': str(e)}, status=500)
+
+    return JsonResponse({'erro': 'Método não permitido'}, status=405)
+
+# Pausar cronômetro
+def pausar_cronometro(request, vereador_id):
+    if request.method == "POST":
+        cronometro = get_object_or_404(Cronometro, vereador_id=vereador_id)
+
+        # Atualiza o tempo restante antes de pausar
+        if cronometro.status == 'Iniciado':
+            agora = timezone.now()
+            segundos_passados = int((agora - cronometro.data_inicio).total_seconds())
+            cronometro.tempo_restante = max(0, cronometro.tempo_restante - segundos_passados)
+
+        cronometro.status = 'Pausado'
+        cronometro.save()
+        return JsonResponse({'status': 'pausado'})
+
+
+
+
+# Parar cronômetro
+def parar_cronometro(request, vereador_id):
+    if request.method == "POST":
+        cronometro = get_object_or_404(Cronometro, vereador_id=vereador_id)
+        cronometro.status = 'Finalizado'
+        cronometro.tempo_restante = 0
+        cronometro.tempo_extra = 0
+        cronometro.save()
+        return JsonResponse({'status': 'finalizado'})
+    return JsonResponse({'erro': 'Método não permitido'}, status=405)
+
+
+# Adicionar +1 minuto de tempo extra
+def adicionar_tempo(request, vereador_id):
+    cronometro = get_object_or_404(Cronometro, vereador_id=vereador_id)
+    cronometro.tempo_restante += 60
+    cronometro.tempo_extra += 60
+    cronometro.save()
+    return JsonResponse({
+        'status': 'tempo_adicionado',
+        'tempo_restante': cronometro.tempo_restante,
+        'tempo_extra': cronometro.tempo_extra,
+    })
+
+def painel_cronometro(request):
+    vereadores = Vereador.objects.all()  # Busca todos os vereadores
+    live = Live.objects.first()  # Pega a primeira live cadastrada (se houver)
+
+    return render(request, 'core/painel_cronometro.html', {
+        'vereadores': vereadores,
+        'live_link': live.link if live else None  # Passa o link da live, se existir
+    })
+
+def tempo_restante(request, vereador_id):
+    cronometro = get_object_or_404(Cronometro, vereador_id=vereador_id)
+
+    if cronometro.status == 'Iniciado':
+        agora = timezone.now()
+        segundos_passados = int((agora - cronometro.data_inicio).total_seconds())
+        tempo_atualizado = cronometro.tempo_restante - segundos_passados
+
+        if tempo_atualizado < 0:
+            tempo_atualizado = 0
+            cronometro.status = 'Finalizado'
+        
+        return JsonResponse({
+            'tempo_restante': tempo_atualizado,
+            'status': cronometro.status
+        })
+
+    return JsonResponse({
+        'tempo_restante': cronometro.tempo_restante,
+        'status': cronometro.status
+    })
+
+
+def api_cronometro_ativo(request):
+    try:
+        cronometro = Cronometro.objects.get(status='Iniciado')
+        agora = timezone.now()
+        segundos_passados = int((agora - cronometro.data_inicio).total_seconds())
+        tempo_atualizado = cronometro.tempo_restante - segundos_passados
+
+        if tempo_atualizado <= 0:
+            tempo_atualizado = 0
+            cronometro.status = 'Finalizado'
+            cronometro.save()
+
+        vereador = cronometro.vereador
+
+        return JsonResponse({
+            'vereador_nome': vereador.nome,
+            'vereador_partido': vereador.partido,
+            'vereador_funcao': vereador.funcao,
+            'vereador_foto': vereador.foto.url if vereador.foto else '',
+            'tempo_restante': tempo_atualizado,
+            'tempo_extra': cronometro.tempo_extra,
+            'status': cronometro.status,
+        })
+    except Cronometro.DoesNotExist:
+        return JsonResponse({
+            'tempo_restante': 0,
+            'status': 'Finalizado',
+        })
+    
+def api_sessao_ativa(request):
+    # Buscar a sessão ativa mais recente que não está encerrada
+    sessao = Sessao.objects.filter(status='Em Andamento', data_hora__lte=timezone.now()).order_by('-data_hora').first()
+    
+    if sessao:
+        # Se a sessão estiver ativa, retorna o nome da sessão
+        return JsonResponse({"nome": sessao.nome})
+    else:
+        # Se não houver sessão ativa, retorna "Em Andamento"
+        return JsonResponse({"nome": "Em Andamento"})
