@@ -10,6 +10,7 @@ import os
 from django.conf import settings
 from .forms import PautaForm
 from django.utils import timezone
+from .models import Live  # Importando a classe Live (se ela for um modelo)
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
