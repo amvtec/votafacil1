@@ -183,6 +183,7 @@ class Cronometro(models.Model):
     vereador = models.ForeignKey(Vereador, on_delete=models.CASCADE)
     tempo_inicial = models.IntegerField()  # Em segundos
     tempo_restante = models.IntegerField()
+    tempo_extra = models.IntegerField(default=0)  # Novo campo para tempo extra
     status = models.CharField(max_length=10, choices=[('Iniciado', 'Iniciado'), ('Pausado', 'Pausado'), ('Finalizado', 'Finalizado')])
     data_inicio = models.DateTimeField(auto_now_add=True)
 

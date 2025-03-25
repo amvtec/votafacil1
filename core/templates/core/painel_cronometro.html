@@ -14,8 +14,8 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #0f172a;
-            color: #fff;
+            background-color: #ffffff;
+            color: #ffffff;
             font-family: 'Segoe UI', sans-serif;
             display: flex;
             flex-direction: column;
@@ -25,7 +25,7 @@
 
         h1 {
             text-align: center;
-            color: #38bdf8;
+            color: #000000;
             margin-bottom: 30px;
         }
 
@@ -83,6 +83,7 @@
             margin-top: 10px;
         }
 
+        /* Cores diferenciadas para os botões */
         .botoes button {
             background-color: #38bdf8;
             border: none;
@@ -97,6 +98,30 @@
 
         .botoes button:hover {
             background-color: #0ea5e9;
+        }
+
+        .botoes button.pausar {
+            background-color: #f39c12;
+        }
+
+        .botoes button.pausar:hover {
+            background-color: #e67e22;
+        }
+
+        .botoes button.parar {
+            background-color: #dc3545;
+        }
+
+        .botoes button.parar:hover {
+            background-color: #c0392b;
+        }
+
+        .botoes button.adicionar {
+            background-color: #2ecc71;
+        }
+
+        .botoes button.adicionar:hover {
+            background-color: #27ae60;
         }
 
         @keyframes piscar {
@@ -168,13 +193,14 @@
         <div class="tempo" id="tempo-{{ vereador.id }}">--:--</div>
         <div class="botoes">
             <button onclick="controlar({{ vereador.id }}, 'iniciar')">▶️</button>
-            <button onclick="controlar({{ vereador.id }}, 'pausar')">⏸️</button>
-            <button onclick="controlar({{ vereador.id }}, 'parar')">⏹️</button>
-            <button onclick="controlar({{ vereador.id }}, 'adicionar')">➕</button>
+            <button onclick="controlar({{ vereador.id }}, 'pausar')" class="pausar">⏸️</button>
+            <button onclick="controlar({{ vereador.id }}, 'parar')" class="parar">⏹️</button>
+            <button onclick="controlar({{ vereador.id }}, 'adicionar')" class="adicionar">➕</button>
         </div>
     </div>
 </div>
 {% endfor %}
+
 <script>
     const tempos = {};
     const status = {};

@@ -1049,13 +1049,14 @@ def iniciar_cronometro(request, vereador_id):
             tempo_padrao = 300  # 5 minutos
             agora = timezone.now()
 
-            # Finaliza os cronômetros anteriores
+            # Finaliza os cronômetros anteriores dos outros vereadores
             Cronometro.objects.exclude(vereador_id=vereador_id).update(
                 status='Finalizado',
                 tempo_restante=0,
                 tempo_extra=0
             )
 
+            # Tenta obter ou criar um novo cronômetro para o vereador
             cronometro, created = Cronometro.objects.get_or_create(
                 vereador_id=vereador_id,
                 defaults={
@@ -1068,6 +1069,7 @@ def iniciar_cronometro(request, vereador_id):
             )
 
             if not created:
+                # Se o cronômetro não foi criado, atualiza o cronômetro existente
                 if cronometro.status == 'Pausado':
                     cronometro.data_inicio = agora
                 elif cronometro.status == 'Finalizado':
@@ -1080,7 +1082,9 @@ def iniciar_cronometro(request, vereador_id):
 
             return JsonResponse({
                 'status': cronometro.status,
-                'tempo_restante': cronometro.tempo_restante
+                'tempo_restante': cronometro.tempo_restante,
+                'tempo_extra': cronometro.tempo_extra,
+                'message': 'Cronômetro iniciado com sucesso'
             })
 
         except Exception as e:

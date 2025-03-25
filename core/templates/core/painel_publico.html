@@ -20,13 +20,15 @@
             position: fixed;
             top: 0; 
             left: 0;
-            width: 50vw;
-            height: 100vh;
+            width: 100vw; /* 100% da largura da janela */
+            height: 100vh; /* 100% da altura da janela */
             background: url('{% static "imagens/papel_de_parede.jpg" %}') no-repeat center center;
-            background-size: cover;
+            background-size: cover;  /* A imagem ocupa toda a tela, pode cortar */
+            background-position: center center; /* Garante o centro da imagem */
             z-index: 9999; /* Fica por cima de tudo */
             display: none; /* ou block se quiser exibir caso não haja sessão */
         }
+
 
         /* 🔹 Div que envolve todo seu painel público */
         #painelPublico {
