@@ -29,6 +29,23 @@
             display: none; /* ou block se quiser exibir caso não haja sessão */
         }
 
+        .faixa-topo,
+        .faixa-rodape {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background-color: #ffd900;
+            z-index: 9998;
+        }
+
+        .faixa-topo {
+             top: 0;
+        }
+
+        .faixa-rodape {
+            bottom: 0;
+        }
 
         /* 🔹 Div que envolve todo seu painel público */
         #painelPublico {
@@ -55,10 +72,11 @@
             white-space: nowrap;
         }
         .relogio-container {
-            font-size: 18px;
+            font-size: 26px;
             font-weight: bold;
             color: white;
             white-space: nowrap;
+            text-align: left;
         }
         .conteudo {
             display: flex;
@@ -80,10 +98,10 @@
             width: 100%;
         }
         .pauta-info h2 {
-            color: #ffc107;
+            color: #ffd900;
         }
         .sessao-info {
-            color: #ffc107;
+            color: #ffd900;
         }
         .pauta-info p {
             text-align: justify;
@@ -111,10 +129,10 @@
             padding: 5px;
         }
         .presente {
-            background: #012e0b;
+            background: #00a316;
         }
         .ausente {
-            background: #86111d;
+            background: #c91313;
         }
         .vereador-card img {
             width: 55px;
@@ -137,16 +155,16 @@
             margin-top: 5px;
         }
         .voto-sim-box {
-            background: #0da032;
+            background: #ffffff;
             color: rgb(0, 0, 0);
         }
         .voto-nao-box {
-            background: #dc3545;
-            color: white;
+            background: #ffffff;
+            color: rgb(0, 0, 0);
         }
         .voto-abstencao-box {
             background: #ffc107;
-            color: black;
+            color: rgb(0, 0, 0);
         }
         .votacao-info h3 {
             margin-top: -130px;
@@ -171,16 +189,16 @@
             text-align: center;
         }
         .presentes {
-            background: #28a745;
+            background: #ffffff;
         }
         .ausentes {
-            background: #dc3545;
+            background: #ffffff;
         }
         .votos-sim {
-            background: #0d5e20;
+            background: #018520;
         }
         .votos-nao {
-            background: #dc3545;
+            background: #f81229;
         }
         .votos-abstencao {
             background: #ffc107;
@@ -201,6 +219,9 @@
     </style>
 </head>
 <body>
+
+    <div class="faixa-topo"></div>
+    <div class="faixa-rodape"></div>
 
     <!-- 🔹 DIV DO DESCANSO DE TELA -->
     <div id="screensaver"
@@ -292,7 +313,7 @@
                             <div class="vereador-card ${vereador.presente ? 'presente' : 'ausente'}">
                                 <img src="${vereador.foto}" alt="Foto de ${vereador.nome}">
                                 <p>${vereador.nome}</p>
-                                <p>${vereador.presente ? '✅ Presente' : '❌ Ausente'}</p>
+                                <p>${vereador.presente ? '🟢 Presente' : '🔴 Ausente'}</p>
                                 <div class="${votoClass}">${vereador.voto !== "Nenhum" ? vereador.voto : ""}</div>
                             </div>
                         `;

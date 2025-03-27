@@ -363,84 +363,83 @@ def format_text(text):
     return Paragraph(text, table_text_style) if text else "-"
 
 def gerar_relatorio(request, sessao_id):
-    # Obtém a sessão e suas pautas
     sessao = Sessao.objects.get(id=sessao_id)
     pautas = Pauta.objects.filter(sessao=sessao)
     votos = Votacao.objects.filter(pauta__in=pautas)
+    camara = CamaraMunicipal.objects.first()
 
-    # Configura a resposta HTTP para PDF
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'inline; filename="relatorio_sessao_{sessao.id}.pdf"'
 
-    # Criar o documento PDF
     doc = SimpleDocTemplate(response, pagesize=letter)
     elements = []
     styles = getSampleStyleSheet()
 
-    # 🔹 Estilos personalizados
-    left_aligned_style = ParagraphStyle(name="LeftAligned", parent=styles["Normal"], alignment=0)
-    centered_style = ParagraphStyle(name="Centered", parent=styles["Normal"], alignment=1)
+    # Estilos personalizados
+    left_aligned = ParagraphStyle(name="LeftAligned", parent=styles["Normal"], alignment=0)
+    centered = ParagraphStyle(name="Centered", parent=styles["Normal"], alignment=1)
+    titulo_grande = ParagraphStyle(name="TituloGrande", parent=styles["Heading1"], fontSize=16, alignment=0)
 
-    # 🔹 Cabeçalho com Logo e Informações da Câmara
-    câmara_nome = "Câmara Municipal de Wanderlândia"
-    câmara_endereco = "Av. Gomes Ferreira, 564 - Centro, Wanderlândia/TO"
-    câmara_cnpj = "CNPJ: 00.237.271/0001-65"
-    logo_path = "static/img/logo.png"
+    # 🔹 LOGO da Câmara via Cloudinary (se houver)
+    if camara and camara.logo:
+        try:
+            with urllib.request.urlopen(camara.logo.url) as url:
+                logo_data = io.BytesIO(url.read())
+                img = Image(ImageReader(logo_data), width=80, height=80)
+                elements.append(img)
+        except Exception:
+            elements.append(Paragraph("LOGO NÃO DISPONÍVEL", left_aligned))
+    else:
+        elements.append(Paragraph("LOGO NÃO DISPONÍVEL", left_aligned))
 
-    try:
-        img = Image(logo_path, width=80, height=80)
-        elements.append(img)
-    except Exception:
-        elements.append(Paragraph("LOGO NÃO DISPONÍVEL", left_aligned_style))
+    # 🔹 Informações da Câmara
+    if camara:
+        endereco_formatado = f"{camara.endereco or ''}, {camara.numero or ''} - {camara.cidade or ''}/{camara.uf or ''}"
+        elements.append(Paragraph(f"<b>{camara.nome}</b>", titulo_grande))
+        elements.append(Paragraph(endereco_formatado, left_aligned))
+        elements.append(Paragraph(f"CNPJ: {camara.cnpj or 'Não informado'}", left_aligned))
+    else:
+        elements.append(Paragraph("Informações da Câmara não cadastradas.", left_aligned))
 
-    elements.append(Paragraph(f"<b>{câmara_nome}</b>", left_aligned_style))
-    elements.append(Paragraph(f"{câmara_endereco}", left_aligned_style))
-    elements.append(Paragraph(f"{câmara_cnpj}", left_aligned_style))
-    elements.append(Spacer(1, 10))  
+    elements.append(Spacer(1, 12))
 
     # 🔹 Informações da Sessão
-    elements.append(Paragraph(f"<b>Relatório da Sessão:</b> {sessao.nome}", left_aligned_style))
-    elements.append(Paragraph(f"Data: {sessao.data.strftime('%d/%m/%Y')}", left_aligned_style))
-    elements.append(Paragraph(f"Horário: {sessao.hora.strftime('%H:%M')}", left_aligned_style))
-    elements.append(Paragraph(f"Status: {sessao.status}", left_aligned_style))
+    elements.append(Paragraph(f"<b>Relatório da Sessão:</b> {sessao.nome}", left_aligned))
+    elements.append(Paragraph(f"Data: {sessao.data.strftime('%d/%m/%Y')}", left_aligned))
+    elements.append(Paragraph(f"Horário: {sessao.hora.strftime('%H:%M')}", left_aligned))
+    elements.append(Paragraph(f"Status: {sessao.status}", left_aligned))
     elements.append(Spacer(1, 15))
 
-    # 🔹 Exibir cada pauta separadamente com seus votos
+    # 🔹 Pautas e votos
     for pauta in pautas:
-        elements.append(Paragraph(f"<b>Pauta:</b> {pauta.titulo}", left_aligned_style))
-        elements.append(Paragraph(f"<b>Tipo:</b> {pauta.tipo}", left_aligned_style))
-        elements.append(Paragraph(f"<b>Autor:</b> {pauta.autor.nome}", left_aligned_style))
-        elements.append(Paragraph(f"<b>Status:</b> {pauta.status}", left_aligned_style))
+        elements.append(Paragraph(f"<b>Pauta:</b> {pauta.titulo}", left_aligned))
+        elements.append(Paragraph(f"<b>Tipo:</b> {pauta.tipo}", left_aligned))
+        elements.append(Paragraph(f"<b>Autor:</b> {pauta.autor.nome}", left_aligned))
+        elements.append(Paragraph(f"<b>Status:</b> {pauta.status}", left_aligned))
 
-        # 🔹 Adicionar o Tipo de Votação (Simples, Absoluta, Qualificada)
-        tipo_votacao_texto = "Não Definido"
-        if pauta.tipo_votacao == "simples":
-            tipo_votacao_texto = "Maioria Simples"
-        elif pauta.tipo_votacao == "absoluta":
-            tipo_votacao_texto = "Maioria Absoluta"
-        elif pauta.tipo_votacao == "qualificada":
-            tipo_votacao_texto = "Maioria Qualificada (2/3)"
-        
-        elements.append(Paragraph(f"<b>Tipo de Votação:</b> {tipo_votacao_texto}", left_aligned_style))
-        elements.append(Paragraph(f"<b>Votação:</b> {'Aberta' if pauta.votacao_aberta else 'Secreta'}", left_aligned_style))
+        tipo_txt = {
+            "simples": "Maioria Simples",
+            "absoluta": "Maioria Absoluta",
+            "qualificada": "Maioria Qualificada (2/3)"
+        }.get(pauta.tipo_votacao, "Não definido")
+
+        elements.append(Paragraph(f"<b>Tipo de Votação:</b> {tipo_txt}", left_aligned))
+        elements.append(Paragraph(f"<b>Votação:</b> {'Aberta' if pauta.votacao_aberta else 'Secreta'}", left_aligned))
         elements.append(Spacer(1, 10))
 
-        # 🔹 Contabilizando votos
-        votos_da_pauta = votos.filter(pauta=pauta)
-        votos_sim = votos_da_pauta.filter(voto="Sim").count()
-        votos_nao = votos_da_pauta.filter(voto="Não").count()
-        votos_abstencao = votos_da_pauta.filter(voto="Abstenção").count()
+        votos_pauta = votos.filter(pauta=pauta)
+        votos_sim = votos_pauta.filter(voto="Sim").count()
+        votos_nao = votos_pauta.filter(voto="Não").count()
+        votos_abs = votos_pauta.filter(voto="Abstenção").count()
 
-        # 🔹 Exibir os votos de acordo com o tipo de votação
         if pauta.votacao_aberta:
-            if votos_da_pauta.exists():
-                voto_data = [["Vereador", "Voto"]]
-                for voto in votos_da_pauta:
-                    voto_data.append([voto.vereador.nome, voto.voto])
+            if votos_pauta.exists():
+                data = [["Vereador", "Voto"]]
+                for voto in votos_pauta:
+                    data.append([voto.vereador.nome, voto.voto])
 
-                voto_col_widths = [3 * inch, 2 * inch]
-                tabela_votos = Table(voto_data, colWidths=voto_col_widths)
-                tabela_votos.setStyle(TableStyle([
+                tabela = Table(data, colWidths=[3 * inch, 2 * inch])
+                tabela.setStyle(TableStyle([
                     ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
                     ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
                     ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -449,22 +448,16 @@ def gerar_relatorio(request, sessao_id):
                     ('BACKGROUND', (0, 1), (-1, -1), colors.lightgrey),
                     ('GRID', (0, 0), (-1, -1), 1, colors.black)
                 ]))
-                elements.append(tabela_votos)
+                elements.append(tabela)
             else:
-                elements.append(Paragraph("Nenhum voto registrado para esta pauta.", left_aligned_style))
-        
+                elements.append(Paragraph("Nenhum voto registrado para esta pauta.", left_aligned))
         else:
-            # 🔹 Em votação SECRETA, exibir apenas os totais
-            elements.append(Paragraph("Votação secreta - Nomes ocultados", left_aligned_style))
+            elements.append(Paragraph("Votação secreta - Nomes ocultados", left_aligned))
 
-        # 🔹 Exibir totais de votos (CENTRALIZADO)
         elements.append(Spacer(1, 10))
-        totais_votos_texto = f"<b>Totais de Votos:</b> Sim: {votos_sim} | Não: {votos_nao} | Abstenção: {votos_abstencao}"
-        elements.append(Paragraph(totais_votos_texto, centered_style))
+        elements.append(Paragraph(f"<b>Totais:</b> Sim: {votos_sim} | Não: {votos_nao} | Abstenção: {votos_abs}", centered))
+        elements.append(Spacer(1, 20))
 
-        elements.append(Spacer(1, 20))  # Espaço entre pautas
-
-    # Gera o PDF
     doc.build(elements)
     return response
 
@@ -597,75 +590,80 @@ def api_painel_publico(request):
             "votos_sim": 0, "votos_nao": 0, "votos_abstencao": 0
         })
 
+    # 🔹 PRIORIDADE: se existir uma pauta em votação, ela é a principal
     pauta = Pauta.objects.filter(sessao=sessao, status="Em Votação").first()
+
+    # 🔸 Se não há pauta em votação, mostra a última aprovada ou rejeitada (mais atual)
+    if not pauta:
+        pauta = Pauta.objects.filter(
+            sessao=sessao,
+            status__in=["Aprovada", "Rejeitada"]
+        ).order_by("-atualizado_em").first()
+
+    # 🔹 Se mesmo assim não houver pauta, retorna painel vazio
+    if not pauta:
+        return JsonResponse({
+            "sessao": {"nome": sessao.nome, "descricao": getattr(sessao, "descricao", ""), "status": sessao.status},
+            "pauta": {"titulo": "Nenhuma pauta em votação", "descricao": "", "status": "Aguardando", "tipo_votacao": ""},
+            "vereadores": listar_vereadores(),
+            "votos_sim": 0, "votos_nao": 0, "votos_abstencao": 0
+        })
+
     vereadores_data = listar_vereadores(pauta)
 
-    if pauta:
-        votos_sim = Votacao.objects.filter(pauta=pauta, voto="Sim").count()
-        votos_nao = Votacao.objects.filter(pauta=pauta, voto="Não").count()
-        votos_abstencao = Votacao.objects.filter(pauta=pauta, voto="Abstenção").count()
-        tipo_votacao = pauta.tipo_votacao  # Define o tipo de votação
-    else:
-        votos_sim = votos_nao = votos_abstencao = 0
-        tipo_votacao = ""
+    votos_sim = Votacao.objects.filter(pauta=pauta, voto="Sim").count()
+    votos_nao = Votacao.objects.filter(pauta=pauta, voto="Não").count()
+    votos_abstencao = Votacao.objects.filter(pauta=pauta, voto="Abstenção").count()
+    tipo_votacao = pauta.tipo_votacao or ""
 
     if pauta and not pauta.votacao_aberta:
         for vereador in vereadores_data:
             vereador["voto"] = "🔒 Voto Secreto"
 
-    vereadores_presentes = Vereador.objects.filter(votacao__pauta=None, votacao__presenca=True).exclude(funcao="Presidente").count()
+    vereadores_presentes = Vereador.objects.filter(
+        votacao__pauta=None,
+        votacao__presenca=True
+    ).exclude(funcao="Presidente").count()
 
-    # **Definição da maioria conforme o tipo de votação**
-    if pauta and pauta.tipo_votacao == "Qualificada":
-        maioria = (2 * vereadores_presentes) // 3  # Maioria de 2/3
+    if pauta.tipo_votacao == "qualificada":
+        maioria = (2 * vereadores_presentes) // 3
     else:
-        maioria = (vereadores_presentes // 2) + 1 if vereadores_presentes > 1 else 1  # Maioria simples
+        maioria = (vereadores_presentes // 2) + 1 if vereadores_presentes > 1 else 1
 
     total_votantes = votos_sim + votos_nao + votos_abstencao
     todos_votaram = total_votantes >= vereadores_presentes
 
-    status_pauta = "Aguardando votação"
-    if pauta:
-        status_pauta = "Em Votação"
-
-    if pauta and todos_votaram:
+    if pauta.status == "Em Votação" and todos_votaram:
         if votos_sim >= maioria:
-            status_pauta = "Aprovada ✅"
             pauta.status = "Aprovada"
-            pauta.save()
         elif votos_nao >= maioria:
-            status_pauta = "Rejeitada ❌"
             pauta.status = "Rejeitada"
-            pauta.save()
         elif votos_sim == votos_nao:
             presidente = Vereador.objects.filter(funcao="Presidente").first()
             presidente_votou = Votacao.objects.filter(pauta=pauta, vereador=presidente).exists() if presidente else False
 
-            if not presidente_votou:
-                status_pauta = "Aguardando Votação"
-            else:
-                if votos_sim > votos_nao:
-                    status_pauta = "Aprovada ✅"
-                    pauta.status = "Aprovada"
-                else:
-                    status_pauta = "Rejeitada ❌"
-                    pauta.status = "Rejeitada"
-                pauta.save()
+            if presidente_votou:
+                pauta.status = "Aprovada" if votos_sim > votos_nao else "Rejeitada"
+        pauta.save()
 
-    descricao_sessao = getattr(sessao, "descricao", "Sem descrição disponível")
+    status_display = {
+        "Em Votação": "⛔ Em Votação",
+        "Aprovada": "✅ Aprovada",
+        "Rejeitada": "❌ Rejeitada"
+    }.get(pauta.status, "⚠️ Aguardando votação")
 
     return JsonResponse({
         "sessao": {
             "nome": sessao.nome,
-            "descricao": descricao_sessao,
-            "status": sessao.status  # Agora incluímos o status da sessão
+            "descricao": getattr(sessao, "descricao", ""),
+            "status": sessao.status
         },
         "pauta": {
-            "titulo": pauta.titulo if pauta else "Nenhuma pauta em votação",
-            "descricao": pauta.descricao if pauta else "",
-            "status": status_pauta,
-            "votacao_aberta": pauta.votacao_aberta if pauta else True,
-            "tipo_votacao": tipo_votacao  # Retorna se é comum ou qualificada
+            "titulo": pauta.titulo,
+            "descricao": pauta.descricao,
+            "status": status_display,
+            "votacao_aberta": pauta.votacao_aberta,
+            "tipo_votacao": tipo_votacao
         },
         "vereadores": vereadores_data,
         "votos_sim": votos_sim,

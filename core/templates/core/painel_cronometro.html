@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -79,62 +78,38 @@
 
         .botoes {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
         }
 
-        /* Cores diferenciadas para os botões */
         .botoes button {
-            background-color: #38bdf8;
-            border: none;
-            color: #000;
-            padding: 12px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
-            font-size: 1.1rem;
-            cursor: pointer;
+            border: none;
+            font-size: 1.3rem;
             font-weight: bold;
-            transition: background-color 0.2s;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
 
         .botoes button:hover {
-            background-color: #0ea5e9;
+            transform: scale(1.1);
         }
 
-        .botoes button.pausar {
-            background-color: #f39c12;
-        }
-
-        .botoes button.pausar:hover {
-            background-color: #e67e22;
-        }
-
-        .botoes button.parar {
-            background-color: #dc3545;
-        }
-
-        .botoes button.parar:hover {
-            background-color: #c0392b;
-        }
-
-        .botoes button.adicionar {
-            background-color: #2ecc71;
-        }
-
-        .botoes button.adicionar:hover {
-            background-color: #27ae60;
-        }
+        .botoes button.iniciar { background-color: #28a745; color: white; }
+        .botoes button.pausar { background-color: #f39c12; color: white; }
+        .botoes button.parar { background-color: #dc3545; color: white; }
+        .botoes button.adicionar { background-color: #17a2b8; color: white; }
 
         @keyframes piscar {
-            0%, 100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.3;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
-        /* Responsividade */
         @media (max-width: 768px) {
             .vereador {
                 flex-direction: column;
@@ -142,49 +117,23 @@
                 text-align: center;
                 padding: 15px;
             }
-
             .foto {
                 width: 80px;
                 height: 80px;
             }
-
-            .nome {
-                font-size: 1.2rem;
-            }
-
             .tempo {
                 font-size: 1.8rem;
             }
-
-            .botoes {
-                flex-direction: row;
-                justify-content: center;
-                gap: 8px;
+            .botoes button {
+                width: 60px;
+                height: 60px;
+                font-size: 1.4rem;
             }
         }
-
-        /* Adicionando um layout de live */
-        .live-container {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .live-container iframe {
-            width: 100%;
-            max-width: 800px;
-            height: 450px;
-            border-radius: 8px;
-            border: none;
-        }
-
     </style>
 </head>
 <body>
-
 <h1>Painel de Controle do Cronômetro</h1>
-
 {% for vereador in vereadores %}
 <div class="vereador" id="vereador-{{ vereador.id }}" data-id="{{ vereador.id }}">
     <img src="{{ vereador.foto.url }}" class="foto" alt="{{ vereador.nome }}">
@@ -192,10 +141,10 @@
         <div class="nome">{{ vereador.nome }}</div>
         <div class="tempo" id="tempo-{{ vereador.id }}">--:--</div>
         <div class="botoes">
-            <button onclick="controlar({{ vereador.id }}, 'iniciar')">▶️</button>
-            <button onclick="controlar({{ vereador.id }}, 'pausar')" class="pausar">⏸️</button>
-            <button onclick="controlar({{ vereador.id }}, 'parar')" class="parar">⏹️</button>
-            <button onclick="controlar({{ vereador.id }}, 'adicionar')" class="adicionar">➕</button>
+            <button class="iniciar" onclick="controlar({{ vereador.id }}, 'iniciar')">▶️</button>
+            <button class="pausar" onclick="controlar({{ vereador.id }}, 'pausar')">⏸️</button>
+            <button class="parar" onclick="controlar({{ vereador.id }}, 'parar')">⏹️</button>
+            <button class="adicionar" onclick="controlar({{ vereador.id }}, 'adicionar')">➕</button>
         </div>
     </div>
 </div>
@@ -220,20 +169,13 @@
     function atualizarTemporizador(id) {
         const tempo = tempos[id];
         const statusAtual = status[id];
-
         const tempoEl = $(`#tempo-${id}`);
         const container = $(`#vereador-${id}`);
 
         if (tempo !== undefined) {
             if (statusAtual === "Iniciado") {
                 tempos[id] = Math.max(0, tempo - 1);
-
-                if (tempos[id] <= 15 && tempos[id] > 0) {
-                    tempoEl.addClass("urgente");
-                } else {
-                    tempoEl.removeClass("urgente");
-                }
-
+                tempoEl.toggleClass("urgente", tempos[id] <= 15 && tempos[id] > 0);
                 tempoEl.text(formatarTempo(tempos[id]));
                 container.addClass("ativo");
             } else {
@@ -249,22 +191,15 @@
                 status[id] = data.status;
 
                 const tempoEl = $(`#tempo-${id}`);
-                tempoEl.text(formatarTempo(tempos[id])) ;
+                tempoEl.text(formatarTempo(tempos[id]));
 
-                if (status[id] === "Iniciado") {
-                    $(`#vereador-${id}`).addClass("ativo");
-                } else {
-                    $(`#vereador-${id}`).removeClass("ativo");
-                }
+                $(`#vereador-${id}`).toggleClass("ativo", status[id] === "Iniciado");
             }
         });
     }
 
     function controlar(id, acao) {
-        console.log("Chamando:", acao, "para ID:", id); // DEBUG
         $.post(`/cronometro/${acao}/${id}/`, function(data) {
-            console.log("Resposta:", data); // DEBUG
-            // Atualiza todos após uma ação (para zerar os outros se necessário)
             $('.vereador').each(function () {
                 const vid = $(this).data('id');
                 atualizarTempoBackend(vid);
@@ -274,7 +209,6 @@
         });
     }
 
-    // Atualização em tempo real
     setInterval(() => {
         $('.vereador').each(function () {
             const id = $(this).data('id');
@@ -296,6 +230,5 @@
         });
     });
 </script>
-
 </body>
 </html>
