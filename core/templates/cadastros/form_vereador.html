@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>👤 Cadastrar Vereador</title>
+    <title>🏛️ Cadastrar Câmara Municipal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -27,7 +27,7 @@
             background-color: #fff;
             border-radius: 16px;
             padding: 32px;
-            width: 100%;
+            width: 80%;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
 
@@ -93,12 +93,12 @@
         }
 
         button, .voltar {
-            padding: 10px 20px;
+            padding: 6px 14px;
             border-radius: 999px;
             border: none;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1em;
+            font-size: 0.9em;
             margin: 8px 4px 0;
         }
 
@@ -143,42 +143,17 @@
 <body>
     <div class="form-wrapper">
         <div class="form-container">
-            <h2>👤 Cadastrar Vereador</h2>
+            <h2>🏛️ Cadastrar Câmara Municipal</h2>
 
             {% if sucesso %}
-                <div class="mensagem-sucesso">✅ Vereador cadastrado com sucesso! Redirecionando...</div>
+                <div class="mensagem-sucesso">✅ Dados cadastrados com sucesso! Redirecionando...</div>
             {% endif %}
 
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-
-                {# Renderiza todos os campos, exceto funcao e status #}
-                {% for field in form %}
-                    {% if field.name != 'funcao' and field.name != 'status' %}
-                        <p>
-                            {{ field.label_tag }}
-                            {{ field }}
-                            {% if field.errors %}
-                                <small style="color:red;">{{ field.errors }}</small>
-                            {% endif %}
-                        </p>
-                    {% endif %}
-                {% endfor %}
-
-                {# Função e Status lado a lado #}
-                <div class="linha-dupla">
-                    <div>
-                        {{ form.funcao.label_tag }}
-                        {{ form.funcao }}
-                    </div>
-                    <div>
-                        {{ form.status.label_tag }}
-                        {{ form.status }}
-                    </div>
-                </div>
-
+                {{ form.as_p }}
                 <div style="text-align: center;">
-                    <button type="submit">Salvar Vereador</button>
+                    <button type="submit">Salvar Dados</button>
                     <a href="{% url 'painel_cadastros' %}" class="voltar">← Voltar</a>
                 </div>
             </form>

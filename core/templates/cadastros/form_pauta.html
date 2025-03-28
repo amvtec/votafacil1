@@ -2,74 +2,104 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastrar Pauta - VotaFácil</title>
+    <title>📝 Cadastrar Pauta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             background: linear-gradient(135deg, #4e54c8, #8f94fb);
             font-family: 'Poppins', sans-serif;
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
             margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 700px;
+            padding: 20px;
         }
 
         .form-container {
             background-color: #fff;
             border-radius: 16px;
+            padding: 32px;
+            width: 80%;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            padding: 40px;
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
         }
 
         h2 {
             color: #4e54c8;
-            margin-bottom: 30px;
+            text-align: center;
+            margin-bottom: 24px;
         }
 
         form {
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
         }
 
         form p {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        form label {
+            font-weight: 600;
+            margin-bottom: 4px;
+            width: 100%;
             text-align: left;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 12px;
+            padding: 10px 14px;
             border-radius: 10px;
             border: 1px solid #ccc;
             font-size: 1em;
-            margin-top: 6px;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-top: 4px;
+            text-align: center;
         }
 
-        .button-group {
-            margin-top: 20px;
+        input:focus, select:focus, textarea:focus {
+            border-color: #4e54c8;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(78,84,200,0.2);
+        }
+
+        .linha-dupla {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .linha-dupla div {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         button, .voltar {
-            padding: 12px 24px;
+            padding: 8px 16px;
             border-radius: 999px;
             border: none;
             cursor: pointer;
             font-weight: bold;
-            text-decoration: none;
-            font-size: 1em;
-            display: inline-block;
+            font-size: 0.9em;
+            margin: 8px 4px 0;
         }
 
         button {
@@ -82,12 +112,12 @@
         }
 
         .voltar {
-            background-color: #6b7280;
-            color: white;
+            background-color: #ddd;
+            color: #333;
         }
 
         .voltar:hover {
-            background-color: #4b5563;
+            background-color: #bbb;
         }
 
         .mensagem-sucesso {
@@ -97,10 +127,11 @@
             border-radius: 8px;
             text-align: center;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             border: 2px solid #34d399;
         }
     </style>
+
     {% if sucesso %}
     <script>
         setTimeout(function () {
@@ -110,24 +141,36 @@
     {% endif %}
 </head>
 <body>
-    <div class="form-container">
-        <h2>📝 Cadastrar Pauta</h2>
+    <div class="form-wrapper">
+        <div class="form-container">
+            <h2>📝 Cadastrar Pauta</h2>
 
-        {% if sucesso %}
-            <div class="mensagem-sucesso">
-                ✅ Pauta cadastrada com sucesso! Redirecionando...
-            </div>
-        {% endif %}
+            {% if sucesso %}
+                <div class="mensagem-sucesso">✅ Pauta cadastrada com sucesso! Redirecionando...</div>
+            {% endif %}
 
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
+            <form method="post">
+                {% csrf_token %}
 
-            <div class="button-group">
-                <button type="submit">Salvar Pauta</button>
-                <a href="{% url 'painel_cadastros' %}" class="voltar">← Voltar</a>
-            </div>
-        </form>
+                {# Renderiza todos os campos, exceto os campos específicos como "status" #}
+                {% for field in form %}
+                    {% if field.name != 'status' %}
+                        <p>
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.errors %}
+                                <small style="color:red;">{{ field.errors }}</small>
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                {% endfor %}
+
+                <div style="text-align: center;">
+                    <button type="submit">Salvar Pauta</button>
+                    <a href="{% url 'painel_cadastros' %}" class="voltar">← Voltar</a>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 </html>
