@@ -27,6 +27,10 @@ from .models import PresencaRegistrada
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from .forms import SessaoForm, PautaForm, VereadorForm, CamaraMunicipalForm
+
+
 
 
 
@@ -1204,3 +1208,97 @@ def api_sessao_ativa(request):
     else:
         # Se não houver sessão ativa, retorna "Em Andamento"
         return JsonResponse({"nome": "Em Andamento"})
+
+
+def login_usuario(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        senha = request.POST['senha']
+        user = authenticate(request, username=username, password=senha)
+        if user is not None:
+            login(request, user)
+            return redirect('painel_cadastros')
+        else:
+            return render(request, 'login.html', {'erro': 'Usuário ou senha inválidos'})
+    return render(request, 'login.html')
+
+def logout_usuario(request):
+    logout(request)
+    return redirect('login')
+
+@login_required
+def painel_cadastros(request):
+    return render(request, 'cadastros/painel_cadastros.html')
+
+@login_required
+def cadastrar_sessao(request):
+    form = SessaoForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return render(request, 'cadastros/confirmacao.html')
+    return render(request, 'cadastros/form_sessao.html', {'form': form})
+
+@login_required
+def cadastrar_pauta(request):
+    form = PautaForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return render(request, 'cadastros/confirmacao.html')
+    return render(request, 'cadastros/form_pauta.html', {'form': form})
+
+@login_required
+def cadastrar_vereador(request):
+    form = VereadorForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+        return render(request, 'cadastros/confirmacao.html')
+    return render(request, 'cadastros/form_vereador.html', {'form': form})
+
+@login_required
+def cadastrar_camara(request):
+    form = CamaraMunicipalForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+        return render(request, 'cadastros/confirmacao.html')
+    return render(request, 'cadastros/form_camara.html', {'form': form})
+
+def login_admin(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        senha = request.POST['senha']
+        user = authenticate(request, username=username, password=senha)
+        if user is not None and (user.is_staff or user.is_superuser):
+            login(request, user)
+            return redirect('painel_cadastros')
+        else:
+            return render(request, 'cadastros/login_admin.html', {'erro': 'Acesso não autorizado.'})
+    return render(request, 'cadastros/login_admin.html')
+
+@login_required
+def listar_vereadores(request):
+    vereadores = Vereador.objects.all()
+    return render(request, 'cadastros/listar_vereadores.html', {'vereadores': vereadores})
+
+@login_required
+def listar_sessoes(request):
+    sessoes = Sessao.objects.all()
+    return render(request, 'cadastros/listar_sessoes.html', {'sessoes': sessoes})
+
+@login_required
+def listar_pautas(request):
+    pautas = Pauta.objects.all()
+    return render(request, 'cadastros/listar_pautas.html', {'pautas': pautas})
+
+@login_required
+def editar_vereador(request, vereador_id):
+    vereador = get_object_or_404(Vereador, id=vereador_id)
+    form = VereadorForm(request.POST or None, request.FILES or None, instance=vereador)
+    if form.is_valid():
+        form.save()
+        return redirect('listar_vereadores')
+    return render(request, 'cadastros/form_vereador.html', {'form': form})
+
+@login_required
+def dados_camara(request):
+    camara = CamaraMunicipal.objects.first()
+    return render(request, 'cadastros/dados_camara.html', {'camara': camara})

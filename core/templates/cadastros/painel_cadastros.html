@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Cadastros - VotaFácil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #4e54c8;
+            font-size: 30px;
+            margin-bottom: 30px;
+        }
+        .botoes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .grupo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .botao-arredondado {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .botao-arredondado:hover {
+            transform: scale(1.05);
+        }
+
+        .sessao     { background-color: #3b82f6; }
+        .pauta      { background-color: #10b981; }
+        .vereador   { background-color: #8b5cf6; }
+        .camara     { background-color: #facc15; color: #000; }
+
+        .botao-quadrado {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.2s;
+        }
+
+        .listar-sessao   { background-color: #1d4ed8; color: #fff; }
+        .listar-pauta    { background-color: #047857; color: #fff; }
+        .listar-vereador { background-color: #6d28d9; color: #fff; }
+        .listar-camara   { background-color: #eab308; color: #000; }
+
+        .botao-quadrado:hover {
+            opacity: 0.9;
+        }
+
+        .logout {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: #e11d48;
+            font-weight: bold;
+        }
+
+        .logout:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .botao-arredondado {
+                width: 100px;
+                height: 100px;
+                font-size: 12px;
+            }
+
+            .botao-quadrado {
+                font-size: 0.8em;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔧 Painel de Cadastros</h1>
+
+    <div class="botoes">
+
+        <div class="grupo">
+            <a href="{% url 'cadastrar_sessao' %}" class="botao-arredondado sessao">
+                📅<span>Sessão</span>
+            </a>
+            <a href="{% url 'listar_sessoes' %}" class="botao-quadrado listar-sessao">📋 Listar Sessões</a>
+        </div>
+
+        <div class="grupo">
+            <a href="{% url 'cadastrar_pauta' %}" class="botao-arredondado pauta">
+                📝<span>Pauta</span>
+            </a>
+            <a href="{% url 'listar_pautas' %}" class="botao-quadrado listar-pauta">📂 Listar Pautas</a>
+        </div>
+
+        <div class="grupo">
+            <a href="{% url 'cadastrar_vereador' %}" class="botao-arredondado vereador">
+                👤<span>Vereador</span>
+            </a>
+            <a href="{% url 'listar_vereadores' %}" class="botao-quadrado listar-vereador">📋 Listar Vereadores</a>
+        </div>
+
+        <div class="grupo">
+            <a href="{% url 'cadastrar_camara' %}" class="botao-arredondado camara">
+                🏛️<span>Câmara</span>
+            </a>
+            <a href="{% url 'dados_camara' %}" class="botao-quadrado listar-camara">📘 Dados da Câmara</a>
+        </div>
+
+    </div>
+
+    <a href="{% url 'logout' %}" class="logout">← Sair</a>
+</div>
+</body>
+</html>

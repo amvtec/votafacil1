@@ -68,6 +68,25 @@ urlpatterns = [
     path("api/vereadores_presencas/", api_vereadores_presencas, name="api_vereadores_presencas"),
     path("api/painel-publico/", api_painel_publico, name="api_painel_publico"),
     path("api/pautas_do_dia/", api_pautas_do_dia, name="api_pautas_do_dia"),
+
+
+
+    path('login/', views.login_usuario, name='login'),
+    path('logout/', views.logout_usuario, name='logout'),
+    path('painel-cadastros/', views.painel_cadastros, name='painel_cadastros'),
+    
+    path('cadastrar-sessao/', views.cadastrar_sessao, name='cadastrar_sessao'),
+    path('cadastrar-pauta/', views.cadastrar_pauta, name='cadastrar_pauta'),
+    path('cadastrar-vereador/', views.cadastrar_vereador, name='cadastrar_vereador'),
+    path('cadastrar-camara/', views.cadastrar_camara, name='cadastrar_camara'),
+    path('login-admin/', views.login_admin, name='login_admin'),
+    path('listar-vereadores/', views.listar_vereadores, name='listar_vereadores'),
+    path('listar-sessoes/', views.listar_sessoes, name='listar_sessoes'),
+    path('listar-pautas/', views.listar_pautas, name='listar_pautas'),
+    path('editar-vereador/<int:vereador_id>/', views.editar_vereador, name='editar_vereador'),
+    path('dados-camara/', views.dados_camara, name='dados_camara'),
+
+    
 ]
 
 # 🔹 Configuração para servir arquivos de mídia (PDFs das pautas)

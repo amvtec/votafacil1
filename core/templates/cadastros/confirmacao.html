@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro Realizado</title>
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .checkmark-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #22c55e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pop 0.4s ease-in-out;
+        }
+
+        .checkmark {
+            width: 60px;
+            height: 60px;
+        }
+
+        .checkmark path {
+            stroke: white;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: draw 0.5s ease-in-out forwards;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #22c55e;
+            font-size: 22px;
+            animation: fadein 0.6s ease-in;
+        }
+
+        @keyframes draw {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0.6);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadein {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    <script>
+        setTimeout(function () {
+            window.location.href = "{% url 'painel_cadastros' %}";
+        }, 2000);
+    </script>
+</head>
+<body>
+
+    <div class="checkmark-circle">
+        <svg class="checkmark" viewBox="0 0 52 52">
+            <path d="M14 27l7 7 16-16" />
+        </svg>
+    </div>
+    <h2>Cadastro realizado com sucesso!</h2>
+
+</body>
+</html>
