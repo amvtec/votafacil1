@@ -2,9 +2,10 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Painel do Cronômetro</title>
+    <title>Painel de Controle do Cronômetro</title>
     <meta name="csrf-token" content="{{ csrf_token }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -12,39 +13,55 @@
 
         body {
             margin: 0;
-            padding: 0;
-            background-color: #ffffff;
-            color: #ffffff;
-            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            font-family: 'Poppins', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
         }
 
         h1 {
-            text-align: center;
-            color: #000000;
+            color: white;
             margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        @media (min-width: 640px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         .vereador {
-            display: flex;
-            align-items: center;
             background-color: #1e293b;
-            border-radius: 12px;
+            border-radius: 15px;
             padding: 20px;
-            margin-bottom: 20px;
-            gap: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             transition: 0.3s;
-            width: 100%;
-            max-width: 800px;
-            margin: 20px auto;
+            position: relative;
         }
 
         .vereador.ativo {
-            border: 2px solid #facc15;
-            box-shadow: 0 0 10px #facc15;
+            border: 3px solid #facc15;
+            box-shadow: 0 0 15px #facc15;
         }
 
         .foto {
@@ -53,22 +70,22 @@
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid #fff;
-        }
-
-        .info {
-            flex: 1;
+            margin-bottom: 15px;
         }
 
         .nome {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-align: center;
         }
 
         .tempo {
-            font-size: 2.4rem;
+            font-size: 2rem;
             font-weight: bold;
             color: #facc15;
-            margin-top: 5px;
+            margin-bottom: 15px;
         }
 
         .tempo.urgente {
@@ -80,64 +97,44 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
+            gap: 10px;
         }
 
         .botoes button {
-            width: 52px;
-            height: 52px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             border: none;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
         }
 
         .botoes button:hover {
             transform: scale(1.1);
         }
 
-        .botoes button.iniciar { background-color: #28a745; color: white; }
-        .botoes button.pausar { background-color: #f39c12; color: white; }
-        .botoes button.parar { background-color: #dc3545; color: white; }
+        .botoes button.iniciar   { background-color: #28a745; color: white; }
+        .botoes button.pausar    { background-color: #f39c12; color: white; }
+        .botoes button.parar     { background-color: #dc3545; color: white; }
         .botoes button.adicionar { background-color: #17a2b8; color: white; }
 
         @keyframes piscar {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        @media (max-width: 768px) {
-            .vereador {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                padding: 15px;
-            }
-            .foto {
-                width: 80px;
-                height: 80px;
-            }
-            .tempo {
-                font-size: 1.8rem;
-            }
-            .botoes button {
-                width: 60px;
-                height: 60px;
-                font-size: 1.4rem;
-            }
+            50% { opacity: 0.4; }
         }
     </style>
 </head>
 <body>
-<h1>Painel de Controle do Cronômetro</h1>
-{% for vereador in vereadores %}
-<div class="vereador" id="vereador-{{ vereador.id }}" data-id="{{ vereador.id }}">
-    <img src="{{ vereador.foto.url }}" class="foto" alt="{{ vereador.nome }}">
-    <div class="info">
+
+<h1>⏱️ Painel do Cronômetro</h1>
+
+<div class="grid-container">
+    {% for vereador in vereadores %}
+    <div class="vereador" id="vereador-{{ vereador.id }}" data-id="{{ vereador.id }}">
+        <img src="{{ vereador.foto.url }}" class="foto" alt="{{ vereador.nome }}">
         <div class="nome">{{ vereador.nome }}</div>
         <div class="tempo" id="tempo-{{ vereador.id }}">--:--</div>
         <div class="botoes">
@@ -147,8 +144,8 @@
             <button class="adicionar" onclick="controlar({{ vereador.id }}, 'adicionar')">➕</button>
         </div>
     </div>
+    {% endfor %}
 </div>
-{% endfor %}
 
 <script>
     const tempos = {};

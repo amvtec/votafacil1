@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Estilos (mantidos iguais aos que você forneceu) */
         body {
             margin: 0;
             padding: 0;
@@ -155,30 +156,17 @@
         <button class="menu-btn" onclick="document.querySelector('.sidebar').style.display = 'flex';">☰</button>
         <span>Painel Administrativo</span>
     </div>
+
     <div class="sidebar" id="sidebar">
         <span class="close-btn" onclick="document.querySelector('.sidebar').style.display = 'none';">×</span>
-        <a href="{% url 'listar_sessoes' %}">
-            Listar Sessões
-            <span class="emoji">📋</span>
-        </a>
-        <a href="{% url 'listar_pautas' %}">
-            Listar Pautas
-            <span class="emoji">📂</span>
-        </a>
-        <a href="{% url 'listar_vereadores' %}">
-            Listar Vereadores
-            <span class="emoji">📋</span>
-        </a>
-        <a href="{% url 'dados_camara' %}">
-            Dados da Câmara
-            <span class="emoji">📘</span>
-        </a>
-        <a href="{% url 'listar_relatorios' %}">
-            Relatórios
-            <span class="emoji">📊</span>
-        </a>
+        <a href="{% url 'listar_sessoes' %}">Listar Sessões <span class="emoji">📋</span></a>
+        <a href="{% url 'listar_pautas' %}">Listar Pautas <span class="emoji">📂</span></a>
+        <a href="{% url 'listar_vereadores' %}">Listar Vereadores <span class="emoji">📋</span></a>
+        <a href="{% url 'dados_camara' %}">Dados da Câmara <span class="emoji">📘</span></a>
+        <a href="{% url 'listar_relatorios' %}">Relatórios <span class="emoji">📊</span></a>
         <a href="{% url 'logout' %}" style="color: #f87171;">← Sair</a>
     </div>
+
     <div class="main">
         <div class="container">
             <h1>🔧 Painel de Cadastros</h1>
@@ -193,5 +181,6 @@
             </div>
         </div>
     </div>
+
 </body>
 </html>

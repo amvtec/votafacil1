@@ -500,6 +500,7 @@ def editar_pauta(request, pauta_id):
     
     return render(request, "editar_pauta.html", {"form": form, "pauta": pauta})
 
+@login_required
 def editar_pauta(request, pauta_id):
     pauta = get_object_or_404(Pauta, id=pauta_id)
 
@@ -507,11 +508,16 @@ def editar_pauta(request, pauta_id):
         form = PautaForm(request.POST, instance=pauta)
         if form.is_valid():
             form.save()
-            return redirect("painel_presidente")  # Ou outra URL de retorno
+            messages.success(request, "✅ Pauta atualizada com sucesso!")
+            return redirect("listar_pautas")  # ✅ redireciona para listagem
     else:
         form = PautaForm(instance=pauta)
 
-    return render(request, "editar_pauta.html", {"form": form, "pauta": pauta})
+    return render(request, "cadastros/form_pauta.html", {
+        "form": form,
+        "pauta": pauta,
+        "edicao": True  # opcional: usar no template para exibir "Editar Pauta"
+    })
 
 def remover_pauta(request, pauta_id):
     pauta = get_object_or_404(Pauta, id=pauta_id)
@@ -1275,7 +1281,7 @@ def login_admin(request):
     return render(request, 'cadastros/login_admin.html')
 
 @login_required
-def listar_vereadores(request):
+def listar_vereadores_view(request):
     vereadores = Vereador.objects.all()
     return render(request, 'cadastros/listar_vereadores.html', {'vereadores': vereadores})
 
@@ -1302,3 +1308,12 @@ def editar_vereador(request, vereador_id):
 def dados_camara(request):
     camara = CamaraMunicipal.objects.first()
     return render(request, 'cadastros/dados_camara.html', {'camara': camara})
+
+@login_required
+def editar_sessao(request, sessao_id):
+    sessao = get_object_or_404(Sessao, id=sessao_id)
+    form = SessaoForm(request.POST or None, instance=sessao)
+    if form.is_valid():
+        form.save()
+        return redirect('listar_sessoes')  # volta pra lista depois de editar
+    return render(request, 'cadastros/form_sessao.html', {'form': form})

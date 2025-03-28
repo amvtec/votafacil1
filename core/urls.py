@@ -2,6 +2,10 @@ from django.urls import path
 from django.conf import settings
 from .views import listar_relatorios, gerar_relatorio
 from . import views
+from . import views
+from .views import listar_vereadores_view  # ✅ Adicione isso aqui
+from .views import editar_sessao
+from .views import editar_pauta
 from django.conf.urls.static import static
 from core.views import (
     login_view, logout_view, painel_presidente, painel_vereador, 
@@ -19,6 +23,8 @@ urlpatterns = [
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
     path('termos/', views.termos_de_uso, name='termos_de_uso'),
+    path('cadastros/vereadores/', listar_vereadores_view, name='listar_vereadores'),
+
     
     # Painel do Vereador
     path("vereador/", painel_vereador, name="painel_vereador"),
@@ -80,11 +86,13 @@ urlpatterns = [
     path('cadastrar-vereador/', views.cadastrar_vereador, name='cadastrar_vereador'),
     path('cadastrar-camara/', views.cadastrar_camara, name='cadastrar_camara'),
     path('login-admin/', views.login_admin, name='login_admin'),
-    path('listar-vereadores/', views.listar_vereadores, name='listar_vereadores'),
     path('listar-sessoes/', views.listar_sessoes, name='listar_sessoes'),
     path('listar-pautas/', views.listar_pautas, name='listar_pautas'),
     path('editar-vereador/<int:vereador_id>/', views.editar_vereador, name='editar_vereador'),
     path('dados-camara/', views.dados_camara, name='dados_camara'),
+    path('editar-sessao/<int:sessao_id>/', editar_sessao, name='editar_sessao'),
+    path('editar-pauta/<int:pauta_id>/', editar_pauta, name='editar_pauta'),
+
 
     
 ]
