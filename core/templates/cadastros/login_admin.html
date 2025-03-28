@@ -1,43 +1,98 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Administrativo - VotaFácil</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(135deg, #4e54c8, #8f94fb);
             font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            margin: 0;
+            height: 100vh;
+            background: url("{% if camara and camara.papel_de_parede %}{{ camara.papel_de_parede.url }}{% else %}{% static 'img/background.jpg' %}{% endif %}") no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 1;
+        }
+
+        .voltar-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 3;
+            background-color: #007bff;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .voltar-btn:hover {
+            background-color: #0056b3;
         }
 
         .login-container {
+            position: relative;
+            z-index: 2;
             background-color: #fff;
-            border-radius: 16px;
-            padding: 40px;
-            max-width: 400px;
+            padding: 30px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            max-width: 300px;
             width: 100%;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 15px;
+        }
+
+        .logo img {
+            max-width: 180px;
         }
 
         h2 {
-            text-align: center;
             color: #4e54c8;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         input {
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            padding: 12px 14px;
+            margin-bottom: 15px;
+            border-radius: 8px;
             border: 1px solid #ccc;
-            font-size: 1em;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #4e54c8;
+            outline: none;
+            box-shadow: 0 0 6px rgba(78, 84, 200, 0.3);
         }
 
         button {
@@ -48,8 +103,9 @@
             width: 100%;
             border-radius: 999px;
             font-weight: bold;
+            font-size: 15px;
             cursor: pointer;
-            font-size: 1em;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
@@ -58,18 +114,87 @@
 
         .erro {
             color: red;
-            text-align: center;
-            margin-bottom: 20px;
+            font-size: 14px;
+            margin-bottom: 10px;
             font-weight: bold;
         }
+
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
+            color: #ddd;
+            z-index: 2;
+        }
+
+        .footer a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #007bff;
+        }
+
+        .social-icons {
+            margin-top: 8px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: #007bff;
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 400px) {
+            .login-container {
+                padding: 20px 15px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            input, button {
+                font-size: 14px;
+            }
+
+            .social-icons a {
+                font-size: 18px;
+            }
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
+    <!-- Botão de Voltar para login do vereador -->
+    <a href="{% url 'login' %}" class="voltar-btn">⬅️ Login Vereador</a>
+
+    <!-- Formulário de Login -->
     <div class="login-container">
+        <div class="logo">
+            <img src="{% if camara and camara.logo %}{{ camara.logo.url }}{% else %}{% static 'img/votafacil-logo.png' %}{% endif %}" alt="Logo da Câmara">
+        </div>        
+
         <h2>Login Administrativo</h2>
+
         {% if erro %}
             <p class="erro">{{ erro }}</p>
         {% endif %}
+
         <form method="post">
             {% csrf_token %}
             <input type="text" name="username" placeholder="Usuário" required>
@@ -77,5 +202,22 @@
             <button type="submit">Entrar</button>
         </form>
     </div>
+
+    <!-- Rodapé -->
+    <div class="footer">
+        <p>Desenvolvido por <a href="https://www.seusite.com">AALY SOLUÇÕES ®</a></p>
+        <div class="social-icons">
+            <a href="https://www.instagram.com/alexandremartins_br" target="_blank" title="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://wa.link/kjdrtf" target="_blank" title="WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+        <div style="margin-top: 10px; font-size: 12px;">
+            <a href="{% url 'termos_de_uso' %}" style="color: #ccc;">📜 Termos de Uso e Política de Privacidade</a>
+        </div>
+    </div>
+
 </body>
 </html>

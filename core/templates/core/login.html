@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Vota Fácil</title>
     <style>
-        /* 🔹 Estilos Globais */
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +23,6 @@
             position: relative;
         }
 
-        /* 🔹 Efeito de Desfoque */
         body::before {
             content: "";
             position: absolute;
@@ -37,7 +35,26 @@
             z-index: 1;
         }
 
-        /* 🔹 Caixa de Login */
+        .painel-admin-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+            background-color: #007bff;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .painel-admin-btn:hover {
+            background-color: #0056b3;
+        }
+
         .login-container {
             position: relative;
             z-index: 2;
@@ -67,14 +84,6 @@
         .input-container {
             position: relative;
             margin-bottom: 15px;
-        }
-
-        .input-container i {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #888;
         }
 
         input {
@@ -114,6 +123,7 @@
             color: red;
             margin-bottom: 10px;
             font-size: 14px;
+            font-weight: bold;
         }
 
         .login-container p {
@@ -152,7 +162,6 @@
             color: #007bff;
         }
 
-        /* 🔹 Ícones Sociais */
         .social-icons {
             margin-top: 8px;
             display: flex;
@@ -190,14 +199,15 @@
             }
         }
     </style>
-    <!-- 🔹 FontAwesome para os Ícones -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-    <!-- Container de Login -->
+    <!-- 🔹 Botão Painel Admin -->
+    <a href="{% url 'login_admin' %}" class="painel-admin-btn">Painel Admin</a>
+
+    <!-- 🔹 Container de Login -->
     <div class="login-container">
-        <!-- Logotipo -->
         <div class="logo">
             <img src="{% if camara and camara.logo %}{{ camara.logo.url }}{% else %}{% static 'img/votafacil-logo.png' %}{% endif %}" alt="Logo da Câmara">
         </div>        
@@ -210,15 +220,12 @@
         
         <form method="post">
             {% csrf_token %}
-            
             <div class="input-container">
                 <input type="text" name="cpf" placeholder="Digite seu CPF" required>
             </div>
-            
             <div class="input-container">
                 <input type="password" name="senha" placeholder="Digite sua senha" required>
             </div>
-            
             <button type="submit">Entrar</button>
         </form>
         
@@ -226,24 +233,15 @@
     </div>
 
     <!-- 🔹 Rodapé -->
-    <!-- 🔹 Rodapé -->
-<div class="footer">
-    <p>Desenvolvido por <a href="https://www.seusite.com">AALY SOLUÇÕES ®</a></p>
-    
-    <!-- 🔹 Ícones Sociais -->
-    <div class="social-icons">
-        <a href="https://www.instagram.com/alexandremartins_br?igsh=MWlrMmNoZXVlOXBseQ%3D%3D&utm_source=qr" target="_blank" title="Instagram">
-            <i class="fab fa-instagram"></i>
-        </a>
-        <a href="https://wa.link/kjdrtf" target="_blank" title="WhatsApp">
-            <i class="fab fa-whatsapp"></i>
-        </a>
+    <div class="footer">
+        <p>Desenvolvido por <a href="https://www.seusite.com">AALY SOLUÇÕES ®</a></p>
+        <div class="social-icons">
+            <a href="https://www.instagram.com/alexandremartins_br" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://wa.link/kjdrtf" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+        <div style="margin-top: 10px; font-size: 12px;">
+            <a href="{% url 'termos_de_uso' %}" style="color: #ccc;">📜 Termos de Uso e Política de Privacidade</a>
+        </div>
     </div>
-
-    <!-- 🔹 Termos de Uso -->
-    <div style="margin-top: 10px; font-size: 12px;">
-        <a href="{% url 'termos_de_uso' %}" style="color: #ccc;">📜 Termos de Uso e Política de Privacidade</a>
-    </div>
-</div>
 </body>
 </html>
