@@ -36,9 +36,36 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 15px;
+            padding: 12px 15px;
             border-bottom: 1px solid #eee;
         }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .titulo {
+            font-weight: bold;
+            font-size: 1.05em;
+            color: #333;
+        }
+
+        .status {
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 4px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .status.aprovada { background-color: #28a745; color: white; }
+        .status.rejeitada { background-color: #dc3545; color: white; }
+        .status.em-votacao { background-color: #007bff; color: white; }
+        .status.em-espera { background-color: #ffc107; color: black; }
+        .status.encerrada { background-color: #6c757d; color: white; }
 
         .editar {
             background-color: #34d399;
@@ -73,7 +100,10 @@
 
     {% for p in pautas %}
         <div class="item">
-            <span>{{ p.titulo }} — {{ p.tipo }}</span>
+            <div class="info">
+                <span class="titulo">{{ p.titulo }} — {{ p.tipo }}</span>
+                <span class="status {{ p.status|lower|slugify }}">{{ p.status }}</span>
+            </div>
             <a href="{% url 'editar_pauta' p.id %}" class="editar">✏️ Editar</a>
         </div>
     {% empty %}

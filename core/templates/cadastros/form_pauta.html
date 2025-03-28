@@ -149,10 +149,9 @@
                 <div class="mensagem-sucesso">✅ Pauta cadastrada com sucesso! Redirecionando...</div>
             {% endif %}
 
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                {# Renderiza todos os campos, exceto os campos específicos como "status" #}
                 {% for field in form %}
                     {% if field.name != 'status' %}
                         <p>
@@ -164,6 +163,14 @@
                         </p>
                     {% endif %}
                 {% endfor %}
+
+                <p>
+                    {{ form.status.label_tag }}
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                        <small style="color:red;">{{ form.status.errors }}</small>
+                    {% endif %}
+                </p>
 
                 <div style="text-align: center;">
                     <button type="submit">Salvar Pauta</button>
