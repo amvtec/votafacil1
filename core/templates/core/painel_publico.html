@@ -172,14 +172,14 @@ body {
 .voto-abstencao-box { background: #ffc107; color: black; }
 
 .votacao-info {
-    margin-top: 40px;
+    margin-top: -10px;
 }
 
 .resultados-info, .presenca-info {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 20px;
-    margin-top: 20px;
+    margin-top: 5px; /* Ajuste negativo para subir ambas as seções */
     flex-wrap: wrap;
 }
 
@@ -193,11 +193,23 @@ body {
     text-align: center;
 }
 
-.presentes { background: #ffffff; }
-.ausentes { background: #ffffff; }
-.votos-sim { background: #018520; }
-.votos-nao { background: #f81229; }
-.votos-abstencao { background: #ffc107; }
+.presentes, .ausentes {
+    background: #ffffff;
+}
+
+.votos-sim {
+    background: #018520;
+}
+
+.votos-nao {
+    background: #f81229;
+}
+
+.votos-abstencao {
+    background: #ffc107;
+    color: black;
+}
+
 
 #autor-pauta {
     background-color: #1e1e1e;
