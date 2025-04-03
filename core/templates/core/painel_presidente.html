@@ -1,240 +1,313 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Presidente - VotaFácil</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: #fff;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Presidente - VotaFácil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 
-        .container {
-            max-width: 850px;
-            width: 80%;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #fff;
+    }
 
-        h2, h3 {
-            color: #444;
-        }
+    .container {
+      max-width: 1100px;
+      width: 92%;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 0px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      color: #333;
+      position: relative;
+    }
 
-        .btn {
-            padding: 8px 12px;
-            border-radius: 50px;
-            text-decoration: none;
-            color: #fff;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            min-width: 140px;
-            text-align: center;
-            margin: 8px;
-        }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
-        .logout { background-color: #8d000e; }
-        .logout:hover { background-color: #500007; }
+    .camara-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .profile img {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 5px solid #2575fc;
-            margin-bottom: 5px;
-            object-fit: cover;
-        }
+    .camara-info img {
+      height: 50px;
+    }
 
-        .profile h2 {
-            margin: 5px 0 2px;
-        }
+    .camara-info div {
+      font-size: 20px;
+      font-weight: bold;
+      color: #222;
+    }
 
-        .profile p {
-            margin: 2px 0;
-        }
+    .relogio-data {
+      text-align: right;
+      font-size: 14px;
+    }
 
-        ul {
-            list-style: none;
-            padding: 0;
-        }
+    .profile {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
 
-        li {
-            background: #fff;
-            margin-bottom: 15px;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+    .profile img {
+      width: 100px;
+      height: 100px;
+      border-radius: 0px;
+      border: 1px solid #ffffff;
+      object-fit: cover;
+    }
 
-        .btn-success { background: #32cd32; }
-        .btn-success:hover { background: #28a428; }
+    .dados-vereador {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.1;
+      gap: 1px;
+      margin: 0;
+      padding: 0;
+    }
 
-        .btn-danger { background: #dd0c21; }
-        .btn-danger:hover { background: #6d010a; }
+    .dados-vereador h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
 
-        .btn-primary { background: #2575fc; }
-        .btn-primary:hover { background: #1a5bb8; }
+    .info-menor {
+      font-size: 13px;
+      color: #555;
+      margin: 0;
+      padding: 0;
+    }
 
-        .btn-warning { background: #ffbf00; color: #333; }
-        .btn-warning:hover { background: #e6ac00; }
+    .btn {
+      padding: 8px 12px;
+      border-radius: 0px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      min-width: 140px;
+      text-align: center;
+      margin: 8px;
+    }
 
-        .btn-dark { background: #444; }
-        .btn-dark:hover { background: #333; }
+    .logout { background-color: #8d000e; }
+    .logout:hover { background-color: #500007; }
 
-        .footer-buttons {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin-top: 40px;
-        }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
 
-        .icon-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
+    li {
+      background: #fff;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
 
-        .icon-btn-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
+    .btn-success { background: #32cd32; }
+    .btn-success:hover { background: #28a428; }
 
-        .icon-btn {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            font-size: 36px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: transform 0.2s ease;
-            color: white;
-        }
+    .btn-danger { background: #dd0c21; }
+    .btn-danger:hover { background: #6d010a; }
 
-        .icon-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-        }
+    .btn-primary { background: #2575fc; }
+    .btn-primary:hover { background: #1a5bb8; }
 
-        .icon-btn.laranja { background-color: #ff6f00; }
-        .icon-btn.verde { background-color: #28a745; }
-        .icon-btn.amarelo { background-color: #ffc107; color: #333; }
-        .icon-btn.vermelha { background-color: #75000c; }
+    .btn-warning { background: #ffbf00; color: #333; }
+    .btn-warning:hover { background: #e6ac00; }
 
-        .icon-label {
-            font-size: 0.9em;
-            font-weight: 600;
-            color: #444;
-        }
+    .icon-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
 
-        @media (max-width: 600px) {
-            .btn {
-                width: 50%;
-                margin-bottom: 10px;
-            }
-            .footer-buttons {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-            .icon-buttons {
-                gap: 20px;
-            }
-            .icon-btn {
-                width: 90px;
-                height: 90px;
-                font-size: 30px;
-            }
-        }
-    </style>
+    .icon-btn-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      font-size: 36px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s ease;
+      color: white;
+    }
+
+    .icon-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .icon-btn.laranja { background-color: #ff6f00; }
+    .icon-btn.verde { background-color: #28a745; }
+    .icon-btn.amarelo { background-color: #ffc107; color: #333; }
+    .icon-btn.vermelha { background-color: #75000c; }
+    .icon-btn.azul { background-color: #2575fc; }
+
+    .icon-label {
+      font-size: 0.9em;
+      font-weight: 600;
+      color: #444;
+    }
+
+    @media (max-width: 768px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }
+
+      .camara-info {
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .profile {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .relogio-data {
+        text-align: center;
+      }
+
+      .dados-vereador {
+        align-items: center;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <script>
+    function atualizarHora() {
+      const agora = new Date();
+      const hora = agora.toLocaleTimeString();
+      const data = agora.toLocaleDateString();
+      document.getElementById("hora-atual").innerText = hora;
+      document.getElementById("data-atual").innerText = data;
+    }
+    setInterval(atualizarHora, 1000);
+  </script>
 </head>
-<body>
+<body onload="atualizarHora()">
+
 <div class="container">
-    <div class="profile">
-        {% if presidente.foto %}
-            <img src="{{ presidente.foto.url }}" alt="Foto de {{ presidente.nome }}">
-        {% else %}
-            <img src="https://via.placeholder.com/150" alt="Sem foto disponível">
-        {% endif %}
-        <h2>{{ presidente.nome }}</h2>
-        <p><strong>🎗️ Partido:</strong> {{ presidente.partido }}</p>
-        <p><strong>👨‍⚖️ Função:</strong> Presidente</p>
+  <div class="top-bar">
+    <div class="camara-info">
+      {% if camara and camara.logo %}
+        <img src="{{ camara.logo.url }}" alt="Logo">
+      {% endif %}
+      {% if camara and camara.nome %}
+        <div>{{ camara.nome }}</div>
+      {% else %}
+        <div>Câmara Municipal</div>
+      {% endif %}
     </div>
+    <div class="relogio-data">
+      <div id="hora-atual"></div>
+      <div id="data-atual"></div>
+    </div>
+  </div>
 
-    <ul>
-        {% for sessao in sessoes %}
-        <li>
-            <strong>🗕️ {{ sessao.nome }}</strong> - <em>{{ sessao.status }}</em>
-            {% if sessao.pauta_set.exists %}
-                <p><strong>🗳️ Tipo de Votação:</strong> {{ sessao.pauta_set.first.tipo_votacao }}</p>
-            {% endif %}
-            {% if sessao.status == 'Arquivada' %}
-                <a href="{% url 'abrir_sessao' sessao.id %}" class="btn btn-success">🔓 Reabrir Sessão</a>
-                <a href="{% url 'gerar_relatorio' sessao.id %}" class="btn btn-primary">📄 Ver Relatório</a>
-                <a href="{% url 'gerar_relatorio_presencas' sessao.id %}" class="btn btn-warning">📋 Presenças</a>
-            {% else %}
-                <a href="{% url 'encerrar_sessao' sessao.id %}" class="btn btn-danger">🔒 Encerrar Sessão</a>
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
-
-    {% if sessao_ativa %}
-        <a href="{% url 'ver_presencas' sessao_ativa.id %}" class="btn btn-warning">👀 Ver Presenças</a>
+  <div class="profile">
+    {% if presidente.foto %}
+      <img src="{{ presidente.foto.url }}" alt="Foto de {{ presidente.nome }}">
+    {% else %}
+      <img src="https://via.placeholder.com/150" alt="Sem foto disponível">
     {% endif %}
-
-    <!-- Botão para acessar o cronômetro -->
-    <a href="{% url 'painel_cronometro' %}" class="btn btn-primary" style="margin-top: 30px;">⏱️ Acessar Cronômetro</a>
-
-    <!-- LINHA 1 -->
-    <div class="icon-buttons">
-        <div class="icon-btn-wrapper">
-            <a href="{% url 'registrar_presenca' %}" class="icon-btn laranja" title="Registrar Presença">✅</a>
-            <div class="icon-label">Presença</div>
-        </div>
-        <div class="icon-btn-wrapper">
-            <a href="{% url 'pautas_presidente' %}" class="icon-btn amarelo" title="Pautas do Dia">📋</a>
-            <div class="icon-label">Pautas</div>
-        </div>
+    <div class="dados-vereador">
+      <h2>{{ presidente.nome }}</h2>
+      <p class="info-menor">👨‍⚖️ Presidente</p>
+      <p class="info-menor">🎗️ {{ presidente.partido }}</p>
     </div>
+  </div>
 
-    <!-- LINHA 2 -->
-    <div class="icon-buttons">
-        <div class="icon-btn-wrapper">
-            <a href="{% url 'sessoes_encerradas' %}" class="icon-btn verde" title="Sessões Encerradas">📁</a>
-            <div class="icon-label">Sessões</div>
-        </div>
-        <div class="icon-btn-wrapper">
-            <a href="{% url 'logout' %}" class="icon-btn vermelha" title="Sair">❌
-            </a>
-            <div class="icon-label">Sair</div>
-        </div>
+  <ul>
+    {% for sessao in sessoes %}
+    <li>
+      <strong>🔕 {{ sessao.nome }}</strong> - <em>{{ sessao.status }}</em>
+      {% if sessao.pauta_set.exists %}
+        <p><strong>🗳️ Tipo de Votação:</strong> {{ sessao.pauta_set.first.tipo_votacao }}</p>
+      {% endif %}
+      {% if sessao.status == 'Arquivada' %}
+        <a href="{% url 'abrir_sessao' sessao.id %}" class="btn btn-success">🔓 Reabrir Sessão</a>
+        <a href="{% url 'gerar_relatorio' sessao.id %}" class="btn btn-primary">📄 Ver Relatório</a>
+        <a href="{% url 'gerar_relatorio_presencas' sessao.id %}" class="btn btn-warning">📋 Presenças</a>
+      {% else %}
+        <a href="{% url 'encerrar_sessao' sessao.id %}" class="btn btn-danger">🔒 Encerrar Sessão</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+
+  {% if sessao_ativa %}
+    <a href="{% url 'ver_presencas' sessao_ativa.id %}" class="btn btn-warning">👀 Ver Presenças</a>
+  {% endif %}
+
+  <div class="icon-buttons">
+    <div class="icon-btn-wrapper">
+      <a href="{% url 'registrar_presenca' %}" class="icon-btn laranja">✅</a>
+      <div class="icon-label">Presença</div>
     </div>
+    <div class="icon-btn-wrapper">
+      <a href="{% url 'painel_cronometro' %}" class="icon-btn azul">⏱️</a>
+      <div class="icon-label">Cronômetro</div>
+    </div>
+    <div class="icon-btn-wrapper">
+      <a href="{% url 'pautas_presidente' %}" class="icon-btn amarelo">📋</a>
+      <div class="icon-label">Pautas</div>
+    </div>
+    <div class="icon-btn-wrapper">
+      <a href="{% url 'sessoes_encerradas' %}" class="icon-btn verde">📁</a>
+      <div class="icon-label">Sessões</div>
+    </div>
+    <div class="icon-btn-wrapper">
+      <a href="{% url 'logout' %}" class="icon-btn vermelha">❌</a>
+      <div class="icon-label">Sair</div>
+    </div>
+  </div>
 </div>
+
 </body>
 </html>

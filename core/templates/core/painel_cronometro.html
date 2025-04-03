@@ -1,231 +1,298 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Painel de Controle do Cronômetro</title>
-    <meta name="csrf-token" content="{{ csrf_token }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <title>Painel de Controle do Cronômetro</title>
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #fff;
+    }
 
-        body {
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #4e54c8, #8f94fb);
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 0;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+      color: #333;
+      text-align: center;
+    }
 
-        h1 {
-            color: white;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-        }
+    .camara-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        @media (min-width: 640px) {
-            .grid-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
+    .camara-info img {
+      height: 50px;
+    }
 
-        @media (min-width: 1024px) {
-            .grid-container {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
+    .camara-info div {
+      font-size: 20px;
+      font-weight: bold;
+      color: #222;
+    }
 
-        .vereador {
-            background-color: #1e293b;
-            border-radius: 15px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: 0.3s;
-            position: relative;
-        }
+    .relogio-data {
+      text-align: right;
+      font-size: 14px;
+    }
 
-        .vereador.ativo {
-            border: 3px solid #facc15;
-            box-shadow: 0 0 15px #facc15;
-        }
+    h1 {
+      color: #222;
+      margin: 30px 0;
+      font-size: 26px;
+    }
 
-        .foto {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #fff;
-            margin-bottom: 15px;
-        }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
 
-        .nome {
-            font-size: 1.2rem;
-            color: #fff;
-            margin-bottom: 10px;
-            font-weight: 600;
-            text-align: center;
-        }
+    .vereador {
+      background-color: #1e293b;
+      border-radius: 15px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: 0.3s;
+      position: relative;
+    }
 
-        .tempo {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #facc15;
-            margin-bottom: 15px;
-        }
+    .vereador.ativo {
+      border: 3px solid #facc15;
+      box-shadow: 0 0 15px #facc15;
+    }
 
-        .tempo.urgente {
-            color: red;
-            animation: piscar 1s infinite;
-        }
+    .foto {
+      width: 100px;
+      height: 100px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 3px solid #fff;
+      margin-bottom: 15px;
+    }
 
-        .botoes {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
+    .nome {
+      font-size: 1rem;
+      color: #fff;
+      margin-bottom: 10px;
+      font-weight: 600;
+      text-align: center;
+    }
 
-        .botoes button {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: none;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-        }
+    .tempo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #facc15;
+      margin-bottom: 15px;
+    }
 
-        .botoes button:hover {
-            transform: scale(1.1);
-        }
+    .tempo.urgente {
+      color: red;
+      animation: piscar 1s infinite;
+    }
 
-        .botoes button.iniciar   { background-color: #28a745; color: white; }
-        .botoes button.pausar    { background-color: #f39c12; color: white; }
-        .botoes button.parar     { background-color: #dc3545; color: white; }
-        .botoes button.adicionar { background-color: #17a2b8; color: white; }
+    .botoes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
 
-        @keyframes piscar {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-    </style>
+    .botoes button {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+
+    .botoes button:hover {
+      transform: scale(1.1);
+    }
+
+    .botoes button.iniciar   { background-color: #28a745; color: white; }
+    .botoes button.pausar    { background-color: #f39c12; color: white; }
+    .botoes button.parar     { background-color: #dc3545; color: white; }
+    .botoes button.adicionar { background-color: #17a2b8; color: white; }
+
+    @keyframes piscar {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    @media (max-width: 768px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .relogio-data {
+        text-align: center;
+        margin-top: 10px;
+      }
+    }
+  </style>
+  <script>
+    function atualizarHora() {
+      const agora = new Date();
+      const hora = agora.toLocaleTimeString();
+      const data = agora.toLocaleDateString();
+      document.getElementById("hora-atual").innerText = hora;
+      document.getElementById("data-atual").innerText = data;
+    }
+    setInterval(atualizarHora, 1000);
+  </script>
 </head>
-<body>
+<body onload="atualizarHora()">
 
-<h1>⏱️ Painel do Cronômetro</h1>
+<div class="container">
+  <div class="top-bar">
+    <div class="camara-info">
+      {% if camara and camara.logo %}
+        <img src="{{ camara.logo.url }}" alt="Logo">
+      {% endif %}
+      {% if camara and camara.nome %}
+        <div>{{ camara.nome }}</div>
+      {% else %}
+        <div>Câmara Municipal</div>
+      {% endif %}
+    </div>
+    <div class="relogio-data">
+      <div id="hora-atual"></div>
+      <div id="data-atual"></div>
+    </div>
+  </div>
 
-<div class="grid-container">
+  <h1>Painel Cronômetro</h1>
+
+  <div class="grid-container">
     {% for vereador in vereadores %}
     <div class="vereador" id="vereador-{{ vereador.id }}" data-id="{{ vereador.id }}">
-        <img src="{{ vereador.foto.url }}" class="foto" alt="{{ vereador.nome }}">
-        <div class="nome">{{ vereador.nome }}</div>
-        <div class="tempo" id="tempo-{{ vereador.id }}">--:--</div>
-        <div class="botoes">
-            <button class="iniciar" onclick="controlar({{ vereador.id }}, 'iniciar')">▶️</button>
-            <button class="pausar" onclick="controlar({{ vereador.id }}, 'pausar')">⏸️</button>
-            <button class="parar" onclick="controlar({{ vereador.id }}, 'parar')">⏹️</button>
-            <button class="adicionar" onclick="controlar({{ vereador.id }}, 'adicionar')">➕</button>
-        </div>
+      <img src="{{ vereador.foto.url }}" class="foto" alt="{{ vereador.nome }}">
+      <div class="nome">{{ vereador.nome }}</div>
+      <div class="tempo" id="tempo-{{ vereador.id }}">--:--</div>
+      <div class="botoes">
+        <button class="iniciar" onclick="controlar({{ vereador.id }}, 'iniciar')">▶️</button>
+        <button class="pausar" onclick="controlar({{ vereador.id }}, 'pausar')">⏸️</button>
+        <button class="parar" onclick="controlar({{ vereador.id }}, 'parar')">⏹️</button>
+        <button class="adicionar" onclick="controlar({{ vereador.id }}, 'adicionar')">➕</button>
+      </div>
     </div>
     {% endfor %}
+  </div>
 </div>
 
 <script>
-    const tempos = {};
-    const status = {};
+  const tempos = {};
+  const status = {};
 
-    $.ajaxSetup({
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrf-token]').content
-        }
-    });
-
-    function formatarTempo(segundos) {
-        const min = Math.floor(segundos / 60);
-        const sec = segundos % 60;
-        return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  $.ajaxSetup({
+    headers: {
+      'X-CSRFToken': document.querySelector('[name=csrf-token]').content
     }
+  });
 
-    function atualizarTemporizador(id) {
-        const tempo = tempos[id];
-        const statusAtual = status[id];
+  function formatarTempo(segundos) {
+    const min = Math.floor(segundos / 60);
+    const sec = segundos % 60;
+    return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  }
+
+  function atualizarTemporizador(id) {
+    const tempo = tempos[id];
+    const statusAtual = status[id];
+    const tempoEl = $(`#tempo-${id}`);
+    const container = $(`#vereador-${id}`);
+
+    if (tempo !== undefined) {
+      if (statusAtual === "Iniciado") {
+        tempos[id] = Math.max(0, tempo - 1);
+        tempoEl.toggleClass("urgente", tempos[id] <= 15 && tempos[id] > 0);
+        tempoEl.text(formatarTempo(tempos[id]));
+        container.addClass("ativo");
+      } else {
+        container.removeClass("ativo");
+      }
+    }
+  }
+
+  function atualizarTempoBackend(id) {
+    $.get(`/api/cronometro/tempo/${id}/`, function(data) {
+      if (data.tempo_restante !== undefined) {
+        tempos[id] = data.tempo_restante;
+        status[id] = data.status;
+
         const tempoEl = $(`#tempo-${id}`);
-        const container = $(`#vereador-${id}`);
+        tempoEl.text(formatarTempo(tempos[id]));
 
-        if (tempo !== undefined) {
-            if (statusAtual === "Iniciado") {
-                tempos[id] = Math.max(0, tempo - 1);
-                tempoEl.toggleClass("urgente", tempos[id] <= 15 && tempos[id] > 0);
-                tempoEl.text(formatarTempo(tempos[id]));
-                container.addClass("ativo");
-            } else {
-                container.removeClass("ativo");
-            }
-        }
-    }
-
-    function atualizarTempoBackend(id) {
-        $.get(`/api/cronometro/tempo/${id}/`, function(data) {
-            if (data.tempo_restante !== undefined) {
-                tempos[id] = data.tempo_restante;
-                status[id] = data.status;
-
-                const tempoEl = $(`#tempo-${id}`);
-                tempoEl.text(formatarTempo(tempos[id]));
-
-                $(`#vereador-${id}`).toggleClass("ativo", status[id] === "Iniciado");
-            }
-        });
-    }
-
-    function controlar(id, acao) {
-        $.post(`/cronometro/${acao}/${id}/`, function(data) {
-            $('.vereador').each(function () {
-                const vid = $(this).data('id');
-                atualizarTempoBackend(vid);
-            });
-        }).fail(function(xhr, status, error) {
-            alert("Erro ao chamar a função: " + error);
-        });
-    }
-
-    setInterval(() => {
-        $('.vereador').each(function () {
-            const id = $(this).data('id');
-            atualizarTemporizador(id);
-        });
-    }, 1000);
-
-    setInterval(() => {
-        $('.vereador').each(function () {
-            const id = $(this).data('id');
-            atualizarTempoBackend(id);
-        });
-    }, 5000);
-
-    $(document).ready(function () {
-        $('.vereador').each(function () {
-            const id = $(this).data('id');
-            atualizarTempoBackend(id);
-        });
+        $(`#vereador-${id}`).toggleClass("ativo", status[id] === "Iniciado");
+      }
     });
+  }
+
+  function controlar(id, acao) {
+    $.post(`/cronometro/${acao}/${id}/`, function(data) {
+      $('.vereador').each(function () {
+        const vid = $(this).data('id');
+        atualizarTempoBackend(vid);
+      });
+    }).fail(function(xhr, status, error) {
+      alert("Erro ao chamar a função: " + error);
+    });
+  }
+
+  setInterval(() => {
+    $('.vereador').each(function () {
+      const id = $(this).data('id');
+      atualizarTemporizador(id);
+    });
+  }, 1000);
+
+  setInterval(() => {
+    $('.vereador').each(function () {
+      const id = $(this).data('id');
+      atualizarTempoBackend(id);
+    });
+  }, 5000);
+
+  $(document).ready(function () {
+    $('.vereador').each(function () {
+      const id = $(this).data('id');
+      atualizarTempoBackend(id);
+    });
+  });
 </script>
 </body>
 </html>

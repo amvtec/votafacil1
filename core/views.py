@@ -87,11 +87,14 @@ def painel_vereador(request):
 
     votos_realizados = Votacao.objects.filter(vereador=vereador, pauta__in=pautas).values_list("pauta_id", flat=True)
 
+    camara = CamaraMunicipal.objects.first()  # ✅ adiciona a câmara
+
     return render(request, "core/painel_vereador.html", {
         "vereador": vereador,
         "pautas": pautas,
         "sessao_ativa": sessao_ativa,
         "votos_realizados": votos_realizados,
+        "camara": camara,  # ✅ envia para o template
     })
 
 
@@ -104,12 +107,16 @@ def painel_presidente(request):
 
     presidente = get_object_or_404(Vereador, id=vereador_id, funcao='Presidente')
 
-    # 🔹 **Filtra apenas sessões que NÃO estão arquivadas**
+    # 🔹 Sessões que NÃO estão arquivadas
     sessoes_ativas = Sessao.objects.exclude(status='Arquivada')
+
+    # 🔹 Busca a câmara municipal (pode ajustar esse filtro se houver mais de uma)
+    camara = CamaraMunicipal.objects.first()
 
     return render(request, 'core/painel_presidente.html', {
         'presidente': presidente,
-        'sessoes': sessoes_ativas,  # Apenas sessões ativas
+        'sessoes': sessoes_ativas,
+        'camara': camara,  # Envia a câmara para o template
     })
 
 
@@ -367,7 +374,7 @@ def format_text(text):
     return Paragraph(text, table_text_style) if text else "-"
 
 def gerar_relatorio(request, sessao_id):
-    sessao = Sessao.objects.get(id=sessao_id)
+    sessao = get_object_or_404(Sessao, id=sessao_id)
     pautas = Pauta.objects.filter(sessao=sessao)
     votos = Votacao.objects.filter(pauta__in=pautas)
     camara = CamaraMunicipal.objects.first()
@@ -382,30 +389,32 @@ def gerar_relatorio(request, sessao_id):
     # Estilos personalizados
     left_aligned = ParagraphStyle(name="LeftAligned", parent=styles["Normal"], alignment=0)
     centered = ParagraphStyle(name="Centered", parent=styles["Normal"], alignment=1)
-    titulo_grande = ParagraphStyle(name="TituloGrande", parent=styles["Heading1"], fontSize=16, alignment=0)
+    titulo_grande = ParagraphStyle(name="TituloGrande", parent=styles["Heading1"], fontSize=16, alignment=1)
 
-    # 🔹 LOGO da Câmara via Cloudinary (se houver)
+    # 🔹 LOGO da Câmara via Cloudinary
     if camara and camara.logo:
         try:
-            with urllib.request.urlopen(camara.logo.url) as url:
+            logo_url, _ = cloudinary_url(camara.logo.public_id, format="png")
+            with urllib.request.urlopen(logo_url) as url:
                 logo_data = io.BytesIO(url.read())
                 img = Image(ImageReader(logo_data), width=80, height=80)
+                img.hAlign = "CENTER"
                 elements.append(img)
         except Exception:
-            elements.append(Paragraph("LOGO NÃO DISPONÍVEL", left_aligned))
+            elements.append(Paragraph("LOGO NÃO DISPONÍVEL", centered))
     else:
-        elements.append(Paragraph("LOGO NÃO DISPONÍVEL", left_aligned))
+        elements.append(Paragraph("LOGO NÃO DISPONÍVEL", centered))
 
-    # 🔹 Informações da Câmara
+    # 🔹 Nome e dados da Câmara
     if camara:
         endereco_formatado = f"{camara.endereco or ''}, {camara.numero or ''} - {camara.cidade or ''}/{camara.uf or ''}"
         elements.append(Paragraph(f"<b>{camara.nome}</b>", titulo_grande))
-        elements.append(Paragraph(endereco_formatado, left_aligned))
-        elements.append(Paragraph(f"CNPJ: {camara.cnpj or 'Não informado'}", left_aligned))
+        elements.append(Paragraph(endereco_formatado, centered))
+        elements.append(Paragraph(f"CNPJ: {camara.cnpj or 'Não informado'}", centered))
     else:
-        elements.append(Paragraph("Informações da Câmara não cadastradas.", left_aligned))
+        elements.append(Paragraph("Informações da Câmara não cadastradas.", centered))
 
-    elements.append(Spacer(1, 12))
+    elements.append(Spacer(1, 20))
 
     # 🔹 Informações da Sessão
     elements.append(Paragraph(f"<b>Relatório da Sessão:</b> {sessao.nome}", left_aligned))
@@ -884,78 +893,76 @@ def reabrir_sessao(request, sessao_id):
     return redirect("painel_presidente")
 
 def gerar_relatorio_presencas(request, sessao_id):
-    """ Gera um relatório em PDF das presenças registradas na sessão encerrada. """
-
-    # Obtém a sessão
     sessao = Sessao.objects.get(id=sessao_id)
-
-    # Obtém os vereadores presentes a partir da tabela correta
     vereadores_presentes = PresencaRegistrada.objects.filter(sessao=sessao).values_list("vereador__nome", flat=True)
+    camara = CamaraMunicipal.objects.first()
 
-    # Configura a resposta HTTP para PDF
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'inline; filename="presencas_sessao_{sessao.id}.pdf"'
 
-    # Criar o documento PDF
     doc = SimpleDocTemplate(response, pagesize=letter)
     elements = []
     styles = getSampleStyleSheet()
 
-    # 🔹 Estilos personalizados
-    left_aligned_style = ParagraphStyle(name="LeftAligned", parent=styles["Normal"], alignment=0)
-    centered_style = ParagraphStyle(name="CenteredTitle", parent=styles["Normal"], alignment=1, fontSize=14, spaceAfter=12, fontName="Helvetica-Bold")
+    # Estilos
+    center = ParagraphStyle(name="Center", parent=styles["Normal"], alignment=1)
+    bold_center = ParagraphStyle(name="BoldCenter", parent=styles["Heading2"], alignment=1, fontSize=14)
 
-    # 🔹 Cabeçalho com Logo e Informações da Câmara
-    câmara_nome = "Câmara Municipal de Wanderlândia"
-    câmara_endereco = "Av. Gomes Ferreira, 564 - Centro, Wanderlândia/TO"
-    câmara_cnpj = "CNPJ: 00.237.271/0001-65"
-
-    # 🔹 Caminho da logo
-    logo_path = os.path.join(settings.BASE_DIR, 'core', 'static', 'logo.png')
-
-    if os.path.exists(logo_path):
-        img = Image(logo_path, width=100, height=100)
-        elements.append(img)
+    # Logo (centralizada)
+    if camara and camara.logo:
+        try:
+            with urllib.request.urlopen(camara.logo.url) as url:
+                logo_data = io.BytesIO(url.read())
+                img = Image(ImageReader(logo_data), width=80, height=80)
+                img.hAlign = 'CENTER'
+                elements.append(img)
+        except Exception:
+            elements.append(Paragraph("LOGO NÃO DISPONÍVEL", center))
     else:
-        elements.append(Paragraph("LOGO NÃO DISPONÍVEL", left_aligned_style))
+        elements.append(Paragraph("LOGO NÃO DISPONÍVEL", center))
 
-    elements.append(Paragraph(f"<b>{câmara_nome}</b>", left_aligned_style))
-    elements.append(Paragraph(f"{câmara_endereco}", left_aligned_style))
-    elements.append(Paragraph(f"{câmara_cnpj}", left_aligned_style))
+    # Informações da Câmara (centralizado)
+    if camara:
+        endereco_formatado = f"{camara.endereco or ''}, {camara.numero or ''} - {camara.cidade or ''}/{camara.uf or ''}"
+        elements.append(Paragraph(f"<b>{camara.nome}</b>", bold_center))
+        elements.append(Paragraph(endereco_formatado, center))
+        elements.append(Paragraph(f"CNPJ: {camara.cnpj or 'Não informado'}", center))
+    else:
+        elements.append(Paragraph("Informações da Câmara não cadastradas.", center))
+
+    elements.append(Spacer(1, 20))
+
+    # Sessão
+    elements.append(Paragraph(f"<b>Relatório de Presença - Sessão:</b> {sessao.nome}", center))
+    elements.append(Paragraph(f"Data: {sessao.data.strftime('%d/%m/%Y')}", center))
+    elements.append(Paragraph(f"Horário: {sessao.hora.strftime('%H:%M')}", center))
+    elements.append(Paragraph(f"Status: {sessao.status}", center))
+    elements.append(Spacer(1, 30))
+
+    # Título da Tabela
+    elements.append(Paragraph("<b>Vereadores Presentes</b>", bold_center))
     elements.append(Spacer(1, 15))
 
-    # 🔹 Informações da Sessão
-    elements.append(Paragraph(f"<b>Relatório de Presença - Sessão:</b> {sessao.nome}", left_aligned_style))
-    elements.append(Paragraph(f"Data: {sessao.data.strftime('%d/%m/%Y')}", left_aligned_style))
-    elements.append(Paragraph(f"Horário: {sessao.hora.strftime('%H:%M')}", left_aligned_style))
-    elements.append(Paragraph(f"Status: {sessao.status}", left_aligned_style))
-    elements.append(Spacer(1, 30))  # 🔹 Adiciona mais espaço
-
-    # 🔹 Título centralizado para vereadores presentes
-    elements.append(Paragraph("<b>Vereadores Presentes</b>", centered_style))
-    elements.append(Spacer(1, 15))  # 🔹 Espaço entre o título e a tabela
-
-    # 🔹 Tabela de presença com linha para assinatura
+    # Tabela de presença
     if vereadores_presentes:
-        presenca_data = [["Vereador", "Assinatura"]]
-        for vereador in vereadores_presentes:
-            presenca_data.append([vereador, "_______________________________________"])  # Linha para assinatura
+        data = [["Vereador", "Assinatura"]]
+        for nome in vereadores_presentes:
+            data.append([nome, "_______________________________________"])
         
-        tabela_presencas = Table(presenca_data, colWidths=[3.5 * inch, 3.5 * inch])
-        tabela_presencas.setStyle(TableStyle([
+        tabela = Table(data, colWidths=[3.5 * inch, 3.5 * inch])
+        tabela.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
             ('BACKGROUND', (0, 1), (-1, -1), colors.white),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ]))
-        elements.append(tabela_presencas)
+        elements.append(tabela)
     else:
-        elements.append(Paragraph("Nenhum vereador registrou presença.", left_aligned_style))
+        elements.append(Paragraph("Nenhum vereador registrou presença.", center))
 
-    # Gera o PDF
     doc.build(elements)
     return response
 
@@ -1016,14 +1023,17 @@ def listar_relatorios(request):
 
 
 def atualizar_botoes_voto(request):
-    vereador = request.user.vereador
+    vereador_id = request.session.get("vereador_id")
+    if not vereador_id:
+        return JsonResponse({"html": ""})  # Usuário não autenticado como vereador
+
+    vereador = Vereador.objects.get(id=vereador_id)
     pautas_em_votacao = Pauta.objects.filter(status="Em Votação")
-    
-    # Pauta ainda não votada por esse vereador
-    pautas_para_votar = [
-        pauta for pauta in pautas_em_votacao
-        if pauta.id not in vereador.votos.values_list('pauta_id', flat=True)
-    ]
+
+    # Busca IDs das pautas já votadas por esse vereador
+    votos_feitos = Votacao.objects.filter(vereador=vereador).values_list("pauta_id", flat=True)
+
+    pautas_para_votar = [pauta for pauta in pautas_em_votacao if pauta.id not in votos_feitos]
 
     html = render_to_string("parciais/botoes_voto.html", {
         "pautas": pautas_para_votar,
