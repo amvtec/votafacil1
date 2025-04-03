@@ -167,7 +167,7 @@
             color: rgb(0, 0, 0);
         }
         .votacao-info h3 {
-            margin-top: -130px;
+            margin-top: -50px;
             margin-bottom: 5px;
         }
         .resultados-info, .presenca-info {
@@ -290,6 +290,14 @@
                         <h3 id="status-pauta" style="text-align: center; color: rgb(255, 166, 0);">
                             🟡 Aguardando votação...
                         </h3>
+                        <div id="autor-pauta" style="display: none;">
+                            <img id="foto-autor" src="" alt="Foto do autor">
+                            <div id="autor-info">
+                                <h4 id="nome-autor">Vereador Nome</h4>
+                                <p id="partido-autor">Partido</p>
+                                <small>Pauta de autoria do vereador(a)</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="vereadores-container" id="vereadores-lista"></div>
@@ -305,14 +313,6 @@
                 <div class="presenca-info">
                     <div class="info-box presentes">🟢 Presentes: <span id="presentes-count">0</span></div>
                     <div class="info-box ausentes">🔴 Ausentes: <span id="ausentes-count">0</span></div>
-                </div>
-                <div id="autor-pauta" style="display: none;">
-                    <img id="foto-autor" src="" alt="Foto do autor">
-                    <div id="autor-info">
-                        <h4 id="nome-autor">Vereador Nome</h4>
-                        <p id="partido-autor">Partido</p>
-                        <small>Pauta de autoria do vereador(a)</small>
-                    </div>
                 </div>
                 
             </div>
