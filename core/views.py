@@ -606,26 +606,25 @@ def api_painel_publico(request):
             "sessao": {"nome": "Nenhuma sessão ativa", "descricao": "", "status": "Arquivada"},
             "pauta": {"titulo": "Nenhuma pauta em votação", "descricao": "", "status": "Aguardando", "tipo_votacao": ""},
             "vereadores": listar_vereadores(),
-            "votos_sim": 0, "votos_nao": 0, "votos_abstencao": 0
+            "votos_sim": 0,
+            "votos_nao": 0,
+            "votos_abstencao": 0,
+            "autor_pauta": None,
         })
 
-    # 🔹 PRIORIDADE: se existir uma pauta em votação, ela é a principal
     pauta = Pauta.objects.filter(sessao=sessao, status="Em Votação").first()
-
-    # 🔸 Se não há pauta em votação, mostra a última aprovada ou rejeitada (mais atual)
     if not pauta:
-        pauta = Pauta.objects.filter(
-            sessao=sessao,
-            status__in=["Aprovada", "Rejeitada"]
-        ).order_by("-atualizado_em").first()
+        pauta = Pauta.objects.filter(sessao=sessao, status__in=["Aprovada", "Rejeitada"]).order_by("-atualizado_em").first()
 
-    # 🔹 Se mesmo assim não houver pauta, retorna painel vazio
     if not pauta:
         return JsonResponse({
             "sessao": {"nome": sessao.nome, "descricao": getattr(sessao, "descricao", ""), "status": sessao.status},
             "pauta": {"titulo": "Nenhuma pauta em votação", "descricao": "", "status": "Aguardando", "tipo_votacao": ""},
             "vereadores": listar_vereadores(),
-            "votos_sim": 0, "votos_nao": 0, "votos_abstencao": 0
+            "votos_sim": 0,
+            "votos_nao": 0,
+            "votos_abstencao": 0,
+            "autor_pauta": None,
         })
 
     vereadores_data = listar_vereadores(pauta)
@@ -633,43 +632,64 @@ def api_painel_publico(request):
     votos_sim = Votacao.objects.filter(pauta=pauta, voto="Sim").count()
     votos_nao = Votacao.objects.filter(pauta=pauta, voto="Não").count()
     votos_abstencao = Votacao.objects.filter(pauta=pauta, voto="Abstenção").count()
+
     tipo_votacao = pauta.tipo_votacao or ""
 
-    if pauta and not pauta.votacao_aberta:
+    if not pauta.votacao_aberta:
         for vereador in vereadores_data:
             vereador["voto"] = "🔒 Voto Secreto"
 
-    vereadores_presentes = Vereador.objects.filter(
-        votacao__pauta=None,
-        votacao__presenca=True
-    ).exclude(funcao="Presidente").count()
+    presentes_ids = list(Votacao.objects.filter(pauta=None, presenca=True).values_list("vereador_id", flat=True))
+    total_presentes = len(presentes_ids)
 
-    if pauta.tipo_votacao == "qualificada":
-        maioria = (2 * vereadores_presentes) // 3
-    else:
-        maioria = (vereadores_presentes // 2) + 1 if vereadores_presentes > 1 else 1
+    presidente = Vereador.objects.filter(funcao="Presidente").first()
+    presidente_presente = presidente and presidente.id in presentes_ids
+    presidente_votou = Votacao.objects.filter(pauta=pauta, vereador=presidente).exists() if presidente else False
 
+    vereadores_comuns_presentes = total_presentes - (1 if presidente_presente else 0)
     total_votantes = votos_sim + votos_nao + votos_abstencao
-    todos_votaram = total_votantes >= vereadores_presentes
 
-    if pauta.status == "Em Votação" and todos_votaram:
-        if votos_sim >= maioria:
-            pauta.status = "Aprovada"
-        elif votos_nao >= maioria:
-            pauta.status = "Rejeitada"
-        elif votos_sim == votos_nao:
-            presidente = Vereador.objects.filter(funcao="Presidente").first()
-            presidente_votou = Votacao.objects.filter(pauta=pauta, vereador=presidente).exists() if presidente else False
+    maioria_simples = (vereadores_comuns_presentes // 2) + 1 if vereadores_comuns_presentes > 0 else 1
+    maioria_qualificada = (2 * total_presentes + 2) // 3 if total_presentes > 0 else 1
 
-            if presidente_votou:
-                pauta.status = "Aprovada" if votos_sim > votos_nao else "Rejeitada"
-        pauta.save()
+    if pauta.status == "Em Votação":
+        if tipo_votacao == "qualificada":
+            if presidente_presente and not presidente_votou:
+                pass
+            elif total_votantes >= total_presentes:
+                pauta.status = "Aprovada" if votos_sim >= maioria_qualificada else "Rejeitada"
+                pauta.save()
+        else:
+            if total_votantes >= vereadores_comuns_presentes:
+                if votos_sim > votos_nao:
+                    pauta.status = "Aprovada"
+                    pauta.save()
+                elif votos_nao > votos_sim:
+                    pauta.status = "Rejeitada"
+                    pauta.save()
+                elif votos_sim == votos_nao:
+                    if presidente_presente and presidente_votou:
+                        voto_presidente = Votacao.objects.filter(pauta=pauta, vereador=presidente).first()
+                        if voto_presidente:
+                            if voto_presidente.voto == "Sim":
+                                pauta.status = "Aprovada"
+                            else:
+                                pauta.status = "Rejeitada"
+                        pauta.save()
 
     status_display = {
         "Em Votação": "⛔ Em Votação",
         "Aprovada": "✅ Aprovada",
         "Rejeitada": "❌ Rejeitada"
     }.get(pauta.status, "⚠️ Aguardando votação")
+
+    autor_data = {}
+    if pauta and pauta.autor:
+        autor_data = {
+            "nome": pauta.autor.nome,
+            "partido": pauta.autor.partido,
+            "foto": pauta.autor.foto.url if pauta.autor.foto else ""
+        }
 
     return JsonResponse({
         "sessao": {
@@ -687,7 +707,8 @@ def api_painel_publico(request):
         "vereadores": vereadores_data,
         "votos_sim": votos_sim,
         "votos_nao": votos_nao,
-        "votos_abstencao": votos_abstencao
+        "votos_abstencao": votos_abstencao,
+        "autor_pauta": autor_data
     })
 
 

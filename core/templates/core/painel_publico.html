@@ -93,7 +93,7 @@
         .sessao-info, .pauta-info {
             background: #1e1e1e;
             padding: 20px;
-            border-radius: 12px;
+            border-radius: 0px;
             text-align: left;
             width: 100%;
         }
@@ -116,7 +116,7 @@
         }
         .vereador-card {
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 0px;
             text-align: center;
             font-size: 13px;
             font-weight: bold;
@@ -147,7 +147,7 @@
             justify-content: center;
             width: 95%;
             padding: 3px;
-            border-radius: 3px;
+            border-radius: 0px;
             font-size: 15px;
             font-weight: bold;
             text-align: center;
@@ -159,8 +159,8 @@
             color: rgb(0, 0, 0);
         }
         .voto-nao-box {
-            background: #ffffff;
-            color: rgb(0, 0, 0);
+            background: #ca0808;
+            color: rgb(255, 255, 255);
         }
         .voto-abstencao-box {
             background: #ffc107;
@@ -171,18 +171,17 @@
             margin-bottom: 5px;
         }
         .resultados-info, .presenca-info {
-            position: relative;
-            top: -105%;
             display: flex;
             justify-content: center;
             gap: 30px;
-            margin-top: 10px;
+            margin-top: 20px;
             flex-wrap: wrap;
         }
+
         .info-box {
             width: 160px;
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 0px;
             font-size: 18px;
             font-weight: bold;
             color: rgb(0, 0, 0);
@@ -204,6 +203,46 @@
             background: #ffc107;
             color: black;
         }
+        #autor-pauta {
+            background-color: #1e1e1e;
+            padding: 10px 20px;
+            border-top: 3px solid #ffd900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 50px;
+        }
+
+        #autor-pauta img {
+            width: 80px;
+            height: 80px;
+            border-radius: 0px;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        #autor-info {
+            text-align: left;
+        }
+
+        #autor-info h4 {
+            margin: 0;
+            font-size: 18px;
+            color: #ffd900;
+        }
+
+        #autor-info p {
+            margin: 0;
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        #autor-info small {
+            font-size: 13px;
+            color: #ffffff;
+        }
+
         @media (max-width: 992px) {
             .conteudo {
                 flex-direction: column;
@@ -267,6 +306,15 @@
                     <div class="info-box presentes">🟢 Presentes: <span id="presentes-count">0</span></div>
                     <div class="info-box ausentes">🔴 Ausentes: <span id="ausentes-count">0</span></div>
                 </div>
+                <div id="autor-pauta" style="display: none;">
+                    <img id="foto-autor" src="" alt="Foto do autor">
+                    <div id="autor-info">
+                        <h4 id="nome-autor">Vereador Nome</h4>
+                        <p id="partido-autor">Partido</p>
+                        <small>Pauta de autoria do vereador(a)</small>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -276,6 +324,16 @@
             fetch('/api/painel-publico/', { cache: 'no-store' })
                 .then(response => response.json())
                 .then(data => {
+                    // Mostrar dados do autor da pauta
+                    if (data.autor_pauta && data.autor_pauta.nome) {
+                        document.getElementById('foto-autor').src = data.autor_pauta.foto || '';
+                        document.getElementById('nome-autor').innerText = data.autor_pauta.nome;
+                        document.getElementById('partido-autor').innerText = data.autor_pauta.partido;
+                        document.getElementById('autor-pauta').style.display = 'flex';
+                        } else {
+                        document.getElementById('autor-pauta').style.display = 'none';
+                    }
+
                     console.log("Status da Sessão:", data.sessao ? data.sessao.status : "Nenhuma sessão ativa");
     
                     // Se não há sessão ativa ou está arquivada, ativa descanso de tela
@@ -332,6 +390,7 @@
         // Atualiza automaticamente a cada 1s sem piscar a tela
         setInterval(atualizarPainel, 3000);
         atualizarPainel();
+
     </script>
     
     <script>
