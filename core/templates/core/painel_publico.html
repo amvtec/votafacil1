@@ -5,270 +5,240 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Público - VotaFácil</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #121212;
-            color: white;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
+<style>
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #121212;
+    color: white;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
 
-        /* 🔹 Tela de descanso (screensaver) ocupando toda a janela, inicialmente oculta */
-        #screensaver {
-            position: fixed;
-            top: 0; 
-            left: 0;
-            width: 100vw; /* 100% da largura da janela */
-            height: 100vh; /* 100% da altura da janela */
-            background: url('{% static "imagens/papel_de_parede.jpg" %}') no-repeat center center;
-            background-size: cover;  /* A imagem ocupa toda a tela, pode cortar */
-            background-position: center center; /* Garante o centro da imagem */
-            z-index: 9999; /* Fica por cima de tudo */
-            display: none; /* ou block se quiser exibir caso não haja sessão */
-        }
+.faixa-topo,
+.faixa-rodape {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background-color: #ffd900;
+    z-index: 9998;
+}
 
-        .faixa-topo,
-        .faixa-rodape {
-            position: fixed;
-            left: 0;
-            width: 100%;
-            height: 15px;
-            background-color: #ffd900;
-            z-index: 9998;
-        }
+.faixa-topo {
+     top: 0;
+}
 
-        .faixa-topo {
-             top: 0;
-        }
+.faixa-rodape {
+    bottom: 0;
+}
 
-        .faixa-rodape {
-            bottom: 0;
-        }
+#screensaver {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('{% static "imagens/papel_de_parede.jpg" %}') no-repeat center center;
+    background-size: cover;
+    background-position: center center;
+    z-index: 9999;
+    display: none;
+}
 
-        /* 🔹 Div que envolve todo seu painel público */
-        #painelPublico {
-            position: relative;
-            z-index: 1; /* Fica abaixo do screensaver se ele estiver visível */
-        }
+#painelPublico {
+    position: relative;
+    z-index: 1;
+}
 
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-        .logo {
-            margin-bottom: 20px;
-        }
-        .titulo-camara {
-            font-size: 20px; 
-            font-weight: bold;
-            color: white; 
-            margin: 0;
-            white-space: nowrap;
-        }
-        .relogio-container {
-            font-size: 26px;
-            font-weight: bold;
-            color: white;
-            white-space: nowrap;
-            text-align: left;
-        }
-        .conteudo {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-        }
-        .info-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 48%;
-        }
-        .sessao-info, .pauta-info {
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 0px;
-            text-align: left;
-            width: 100%;
-        }
-        .pauta-info h2 {
-            color: #ffd900;
-        }
-        .sessao-info {
-            color: #ffd900;
-        }
-        .pauta-info p {
-            text-align: justify;
-            margin-top: 10px;
-        }
-        .vereadores-container {
-            width: 48%;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            justify-content: center;
-        }
-        .vereador-card {
-            padding: 15px;
-            border-radius: 0px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: bold;
-            transition: 0.3s;
-            border: 3px solid transparent;
-            background: #252525;
-            color: white;
-            position: relative;
-            height: 180px;
-            padding: 5px;
-        }
-        .presente {
-            background: #0a3110;
-        }
-        .ausente {
-            background: #520c0c;
-        }
-        .vereador-card img {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            border: 2px solid white;
-            margin-bottom: 1px;
-        }
-        .voto-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 95%;
-            padding: 3px;
-            border-radius: 0px;
-            font-size: 15px;
-            font-weight: bold;
-            text-align: center;
-            min-height: 20px;
-            margin-top: 5px;
-        }
-        .voto-sim-box {
-            background: #ffffff;
-            color: rgb(0, 0, 0);
-        }
-        .voto-nao-box {
-            background: #ca0808;
-            color: rgb(255, 255, 255);
-        }
-        .voto-abstencao-box {
-            background: #ffc107;
-            color: rgb(0, 0, 0);
-        }
-        .votacao-info h3 {
-            margin-top: -50px;
-            margin-bottom: 5px;
-        }
-        .resultados-info, .presenca-info {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
 
-        .info-box {
-            width: 160px;
-            padding: 12px;
-            border-radius: 0px;
-            font-size: 18px;
-            font-weight: bold;
-            color: rgb(0, 0, 0);
-            text-align: center;
-        }
-        .presentes {
-            background: #ffffff;
-        }
-        .ausentes {
-            background: #ffffff;
-        }
-        .votos-sim {
-            background: #018520;
-        }
-        .votos-nao {
-            background: #f81229;
-        }
-        .votos-abstencao {
-            background: #ffc107;
-            color: black;
-        }
-        #autor-pauta {
-            background-color: #1e1e1e;
-            padding: 10px 20px;
-            border-top: 3px solid #ffd900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 50px;
-        }
+.logo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
-        #autor-pauta img {
-            width: 80px;
-            height: 80px;
-            border-radius: 0px;
-            object-fit: cover;
-            border: 2px solid white;
-        }
+.titulo-camara {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    margin: 0;
+    white-space: nowrap;
+}
 
-        #autor-info {
-            text-align: left;
-        }
+.relogio-container {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    white-space: nowrap;
+}
 
-        #autor-info h4 {
-            margin: 0;
-            font-size: 18px;
-            color: #ffd900;
-        }
+.conteudo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
 
-        #autor-info p {
-            margin: 0;
-            font-size: 14px;
-            color: #ffffff;
-        }
+.info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 48%;
+}
 
-        #autor-info small {
-            font-size: 13px;
-            color: #ffffff;
-        }
+.sessao-info, .pauta-info {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 0px;
+    text-align: left;
+    width: 100%;
+}
 
-        @media (max-width: 992px) {
-            .conteudo {
-                flex-direction: column;
-                align-items: center;
-            }
-            .info-container, .vereadores-container {
-                width: 100%;
-            }
-            .vereadores-container {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            }
-        }
-    </style>
+.pauta-info h2 {
+    color: #ffd900;
+}
+
+.sessao-info {
+    color: #ffd900;
+}
+
+.pauta-info p {
+    text-align: justify;
+    margin-top: 10px;
+}
+
+.vereadores-container {
+    width: 48%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.vereador-card {
+    padding: 5px;
+    border-radius: 0px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    transition: 0.3s;
+    border: 3px solid transparent;
+    background: #252525;
+    color: white;
+    position: relative;
+    height: 180px;
+}
+
+.presente {
+    background: #0a3110;
+}
+
+.ausente {
+    background: #520c0c;
+}
+
+.vereador-card img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 2px solid white;
+    margin-bottom: 1px;
+}
+
+.voto-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 95%;
+    padding: 3px;
+    border-radius: 0px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    min-height: 20px;
+    margin-top: 5px;
+}
+
+.voto-sim-box { background: #ffffff; color: black; }
+.voto-nao-box { background: #ca0808; color: white; }
+.voto-abstencao-box { background: #ffc107; color: black; }
+
+.votacao-info {
+    margin-top: 40px;
+}
+
+.resultados-info, .presenca-info {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.info-box {
+    width: 160px;
+    padding: 12px;
+    border-radius: 0px;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+}
+
+.presentes { background: #ffffff; }
+.ausentes { background: #ffffff; }
+.votos-sim { background: #018520; }
+.votos-nao { background: #f81229; }
+.votos-abstencao { background: #ffc107; }
+
+#autor-pauta {
+    background-color: #1e1e1e;
+    padding: 10px 20px;
+    border-top: 3px solid #ffd900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+#autor-pauta img {
+    width: 80px;
+    height: 80px;
+    border-radius: 0px;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+#autor-info { text-align: left; }
+#autor-info h4 { margin: 0; font-size: 18px; color: #ffd900; }
+#autor-info p, #autor-info small { margin: 0; font-size: 14px; color: #ffffff; }
+#autor-info small { font-size: 13px; color: #ccc; }
+
+@media (max-width: 992px) {
+    .conteudo { flex-direction: column; align-items: center; }
+    .info-container, .vereadores-container { width: 100%; }
+    .vereadores-container {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+}
+
+</style>
 </head>
 <body>
-
     <div class="faixa-topo"></div>
     <div class="faixa-rodape"></div>
 
-    <!-- 🔹 DIV DO DESCANSO DE TELA -->
-    <div id="screensaver"
-        style="background-image: url('{{ camara.papel_de_parede.url }}'); background-position: center; background-repeat: no-repeat; background-size: cover;">
-    </div>
-    
+    <div id="screensaver" style="background-image: url('{{ camara.papel_de_parede.url }}');"></div>
 
-    <!-- 🔹 DIV COM SEU PAINEL PÚBLICO ORIGINAL -->
     <div id="painelPublico">
         <div class="container">
             <div class="logo">
@@ -277,6 +247,7 @@
                     <span id="data-atual"></span> - <span id="hora-atual"></span>
                 </div>
             </div>
+
             <div class="conteudo">
                 <div class="info-container">
                     <div class="sessao-info">
@@ -287,9 +258,7 @@
                         <h2>Pauta em Votação</h2>
                         <p id="pauta-titulo">Carregando...</p>
                         <p id="pauta-descricao"></p>
-                        <h3 id="status-pauta" style="text-align: center; color: rgb(255, 166, 0);">
-                            🟡 Aguardando votação...
-                        </h3>
+                        <h3 id="status-pauta" style="text-align: center; color: #ffa600;">🟡 Aguardando votação...</h3>
                         <div id="autor-pauta" style="display: none;">
                             <img id="foto-autor" src="" alt="Foto do autor">
                             <div id="autor-info">
@@ -304,7 +273,7 @@
             </div>
 
             <div class="votacao-info">
-                <h3>Resultados Parciais</h3>
+                <h3></h3>
                 <div class="resultados-info">
                     <div class="info-box votos-sim">👍 Sim: <span id="votos-sim">0</span></div>
                     <div class="info-box votos-nao">👎 Não: <span id="votos-nao">0</span></div>
@@ -314,7 +283,6 @@
                     <div class="info-box presentes">🟢 Presentes: <span id="presentes-count">0</span></div>
                     <div class="info-box ausentes">🔴 Ausentes: <span id="ausentes-count">0</span></div>
                 </div>
-                
             </div>
         </div>
     </div>
@@ -324,49 +292,42 @@
             fetch('/api/painel-publico/', { cache: 'no-store' })
                 .then(response => response.json())
                 .then(data => {
-                    // Mostrar dados do autor da pauta
                     if (data.autor_pauta && data.autor_pauta.nome) {
                         document.getElementById('foto-autor').src = data.autor_pauta.foto || '';
                         document.getElementById('nome-autor').innerText = data.autor_pauta.nome;
                         document.getElementById('partido-autor').innerText = data.autor_pauta.partido;
                         document.getElementById('autor-pauta').style.display = 'flex';
-                        } else {
+                    } else {
                         document.getElementById('autor-pauta').style.display = 'none';
                     }
 
-                    console.log("Status da Sessão:", data.sessao ? data.sessao.status : "Nenhuma sessão ativa");
-    
-                    // Se não há sessão ativa ou está arquivada, ativa descanso de tela
                     if (!data.sessao || data.sessao.status === "Arquivada") {
                         document.getElementById('screensaver').style.display = 'block';
                         document.getElementById('painelPublico').style.display = 'none';
                         return;
                     }
-    
-                    // Se há sessão ativa, exibe painel e oculta descanso de tela
+
                     document.getElementById('screensaver').style.display = 'none';
                     document.getElementById('painelPublico').style.display = 'block';
-    
-                    // Atualiza informações no painel
+
                     document.getElementById('sessao-nome').innerText = data.sessao.nome;
                     document.getElementById('sessao-descricao').innerText = data.sessao.descricao;
                     document.getElementById('pauta-titulo').innerText = data.pauta.titulo;
                     document.getElementById('pauta-descricao').innerText = data.pauta.descricao;
                     document.getElementById('status-pauta').innerText = data.pauta.status;
-    
-                    // Atualiza lista de vereadores
+
                     let vereadoresHtml = '';
                     let presentesCount = 0, ausentesCount = 0;
-    
+
                     data.vereadores.forEach(vereador => {
                         let votoClass = "voto-box";
                         if (vereador.voto === "Sim") votoClass += " voto-sim-box";
                         else if (vereador.voto === "Não") votoClass += " voto-nao-box";
                         else if (vereador.voto === "Abstenção") votoClass += " voto-abstencao-box";
-    
+
                         if (vereador.presente) presentesCount++;
                         else ausentesCount++;
-    
+
                         vereadoresHtml += `
                             <div class="vereador-card ${vereador.presente ? 'presente' : 'ausente'}">
                                 <img src="${vereador.foto}" alt="Foto de ${vereador.nome}">
@@ -376,49 +337,37 @@
                             </div>
                         `;
                     });
-    
+
                     document.getElementById('vereadores-lista').innerHTML = vereadoresHtml;
                     document.getElementById('presentes-count').innerText = presentesCount;
                     document.getElementById('ausentes-count').innerText = ausentesCount;
                     document.getElementById('votos-sim').innerText = data.votos_sim;
                     document.getElementById('votos-nao').innerText = data.votos_nao;
                     document.getElementById('votos-abstencao').innerText = data.votos_abstencao;
-                })
-                .catch(error => console.error('Erro ao atualizar painel:', error));
+                });
         }
-    
-        // Atualiza automaticamente a cada 1s sem piscar a tela
+
         setInterval(atualizarPainel, 3000);
         atualizarPainel();
 
-    </script>
-    
-    <script>
         function atualizarRelogio() {
             const agora = new Date();
             const opcoesData = { day: '2-digit', month: '2-digit', year: 'numeric' };
-            const dataFormatada = agora.toLocaleDateString('pt-BR', opcoesData);
-            const horaFormatada = agora.toLocaleTimeString('pt-BR');
-            document.getElementById('data-atual').innerText = dataFormatada;
-            document.getElementById('hora-atual').innerText = horaFormatada;
+            document.getElementById('data-atual').innerText = agora.toLocaleDateString('pt-BR', opcoesData);
+            document.getElementById('hora-atual').innerText = agora.toLocaleTimeString('pt-BR');
         }
         setInterval(atualizarRelogio, 1000);
         atualizarRelogio();
-    </script>
 
-<script>
-    setInterval(function() {
-        fetch("/api/cronometro-ativo/")
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "Iniciado") {
-                    window.location.href = "/cronometro-publico/";
-                }
-            });
-    }, 2000);
+        setInterval(function() {
+            fetch("/api/cronometro-ativo/")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "Iniciado") {
+                        window.location.href = "/cronometro-publico/";
+                    }
+                });
+        }, 2000);
     </script>
-    
-    
 </body>
 </html>
- 
