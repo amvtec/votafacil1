@@ -72,6 +72,15 @@
             text-align: center;
         }
 
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            text-align: left;
+        }
+
         input:focus, select:focus, textarea:focus {
             border-color: #4e54c8;
             outline: none;
@@ -141,36 +150,39 @@
     {% endif %}
 </head>
 <body>
-    <div class="form-wrapper">
-        <div class="form-container">
-            <h2>📅 Cadastrar Sessão</h2>
+<div class="form-wrapper">
+    <div class="form-container">
+        <h2>📅 Cadastrar Sessão</h2>
 
-            {% if sucesso %}
-                <div class="mensagem-sucesso">✅ Sessão cadastrada com sucesso! Redirecionando...</div>
-            {% endif %}
+        {% if sucesso %}
+            <div class="mensagem-sucesso">✅ Sessão cadastrada com sucesso! Redirecionando...</div>
+        {% endif %}
 
-            <form method="post">
-                {% csrf_token %}
+        <form method="post">
+            {% csrf_token %}
 
-                {# Renderiza todos os campos, exceto os campos específicos #}
-                {% for field in form %}
-                    {% if field.name != 'status' %}
-                        <p>
-                            {{ field.label_tag }}
-                            {{ field }}
-                            {% if field.errors %}
-                                <small style="color:red;">{{ field.errors }}</small>
-                            {% endif %}
-                        </p>
+            {% for field in form %}
+                <p>
+                    {{ field.label_tag }}
+                    {% if field.name == 'data' %}
+                        <input type="date" name="data" id="id_data" value="{{ form.data.value|default_if_none:'' }}" required>
+                    {% elif field.name == 'hora' %}
+                        <input type="time" name="hora" id="id_hora" value="{{ form.hora.value|default_if_none:'' }}" required>
+                    {% else %}
+                        {{ field }}
                     {% endif %}
-                {% endfor %}
+                    {% if field.errors %}
+                        <small style="color:red;">{{ field.errors }}</small>
+                    {% endif %}
+                </p>
+            {% endfor %}
 
-                <div style="text-align: center;">
-                    <button type="submit">Salvar Sessão</button>
-                    <a href="{% url 'painel_cadastros' %}" class="voltar">← Voltar</a>
-                </div>
-            </form>
-        </div>
+            <div style="text-align: center;">
+                <button type="submit">Salvar Sessão</button>
+                <a href="{% url 'painel_cadastros' %}" class="voltar">← Voltar</a>
+            </div>
+        </form>
     </div>
+</div>
 </body>
 </html>

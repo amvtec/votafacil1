@@ -5,15 +5,13 @@ from .models import Pauta, Sessao, Vereador, CamaraMunicipal
 class SessaoForm(forms.ModelForm):
     data = forms.DateField(
         widget=forms.DateInput(attrs={
-            'type': 'text',
-            'placeholder': 'dd/mm/aaaa'
+            'type': 'date'
         }),
-        input_formats=['%d/%m/%Y']
+        input_formats=['%d/%m/%Y', '%Y-%m-%d']  # Adiciona suporte a input do navegador
     )
     hora = forms.TimeField(
         widget=forms.TimeInput(attrs={
-            'type': 'text',
-            'placeholder': 'hh:mm'
+            'type': 'time'
         }),
         input_formats=['%H:%M']
     )
@@ -24,24 +22,33 @@ class SessaoForm(forms.ModelForm):
 
 
 class PautaForm(forms.ModelForm):
-    data = forms.DateField(
-        widget=forms.DateInput(attrs={
-            'type': 'text',
-            'placeholder': 'dd/mm/aaaa'
+    descricao = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Descreva a pauta (mínimo 250 e máximo 300 caracteres)',
+            'rows': 4,
+            'maxlength': 300,
+            'minlength': 250,
         }),
-        input_formats=['%d/%m/%Y']
+        min_length=250,
+        max_length=300,
+        label='Descrição'
     )
+
+    data = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        input_formats=['%Y-%m-%d'],
+        label='Data'
+    )
+
     hora = forms.TimeField(
-        widget=forms.TimeInput(attrs={
-            'type': 'text',
-            'placeholder': 'hh:mm'
-        }),
-        input_formats=['%H:%M']
+        widget=forms.TimeInput(attrs={'type': 'time'}),
+        input_formats=['%H:%M'],
+        label='Hora'
     )
 
     class Meta:
         model = Pauta
-        fields = '__all__'
+        fields = '__all__'  # ✅ string final corrigida
 
 
 class VereadorForm(forms.ModelForm):

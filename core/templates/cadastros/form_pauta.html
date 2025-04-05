@@ -72,6 +72,11 @@
             text-align: center;
         }
 
+        textarea[name="descricao"] {
+            min-height: 100px;
+            resize: vertical;
+        }
+
         input:focus, select:focus, textarea:focus {
             border-color: #4e54c8;
             outline: none;
@@ -156,7 +161,15 @@
                     {% if field.name != 'status' %}
                         <p>
                             {{ field.label_tag }}
-                            {{ field }}
+                            {% if field.name == 'descricao' %}
+                                <textarea name="descricao" id="id_descricao" minlength="250" maxlength="300" required>{{ form.descricao.value }}</textarea>
+                            {% elif field.name == 'data' %}
+                                <input type="date" name="data" id="id_data" value="{{ form.data.value }}" required>
+                            {% elif field.name == 'hora' %}
+                                <input type="time" name="hora" id="id_hora" value="{{ form.hora.value }}" required>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
                             {% if field.errors %}
                                 <small style="color:red;">{{ field.errors }}</small>
                             {% endif %}
