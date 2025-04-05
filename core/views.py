@@ -32,9 +32,6 @@ from .forms import SessaoForm, PautaForm, VereadorForm, CamaraMunicipalForm
 
 
 
-
-
-
 def login_view(request):
     camara = CamaraMunicipal.objects.first()  # pega os dados da câmara (logo e papel de parede)
 
